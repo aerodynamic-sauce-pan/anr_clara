@@ -14,8 +14,8 @@ from matplotlib import pyplot as plt
 
 # Argument Parser
 parser = argparse.ArgumentParser(description='High Quality Monocular Depth Estimation via Transfer Learning')
-parser.add_argument('--model', default='models/1589218727-n53-e20-bs4-lr0.0001-densedepth_nyu/weights.20-12.08.hdf5', type=str, help='Trained Keras model file.')
-parser.add_argument('--input', default='F:/ZHD/TN10/mytrain/TestImages/synthetic/*.png', type=str, help='Input filename or folder.')
+parser.add_argument('--model', default='../../Releases/models/1589218727-n53-e20-bs4-lr0.0001-densedepth_nyu/weights.20-12.08.hdf5', type=str, help='Trained Keras model file.')
+parser.add_argument('--input', default='../TrainImages/6.png', type=str, help='Input filename or folder.')
 #parser.add_argument('--input', default='E:/UE_4.16/Engine/Binaries/Win64/4.jpg', type=str, help='Input filename or folder.')
 args = parser.parse_args()
 

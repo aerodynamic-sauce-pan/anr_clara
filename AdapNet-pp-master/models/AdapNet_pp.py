@@ -14,7 +14,7 @@
 
 import tensorflow as tf
 import sys
-sys.path.append('F:\\ZHD\\TN10\\mytrain\\AdapNet-pp-master\\models')
+sys.path.append('/home/tlarcher/Documents/Stage 5A - MiS/git/anr_clara/AdapNet-pp-master/models')
 import network_base
 class AdapNet_pp(network_base.Network):
     def __init__(self, num_classes=12, learning_rate=0.001, float_type=tf.float32, weight_decay=0.0005,
