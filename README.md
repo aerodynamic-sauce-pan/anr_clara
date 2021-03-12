@@ -1,4 +1,3 @@
-
 # Tree detection
 
 ## DarkNet
@@ -16,10 +15,10 @@ in the following directory : `init_checkpoint\synthia_rgb`. The test file `evalu
 *AdapNet* is easily trainable on a single 12GB memory GPU card and has a fast inference time.
 
 # Quality of code
-## Script vérificateur
-In order to guarantee quality of code approaching PEP8 and PEP257 requirements, popular linters, listed in the following sections, are used. To simplify their usage, un script named `checkMyCode.sh`, located in the project root folder, has been created.
+## Linters
+In order to guarantee quality of code approaching PEP8 and PEP257 requirements, popular linters (listed in the following sections) are used. To simplify their usage, a script named `checkMyCode.sh` and located in the project root folder has been created.
 
-##### Configuration & Utilisation
+##### Configuration & usage
 The available options for `checkMyCode.sh` are listed in its first `case in`. In a future version of the script, this help page could be included in it and made accessible via a `--help` argument.
 
 The script runs the **linters** over any `.py` file located in the `src/` directory as well as all its sub-directories, and which name is different from `__init__.py`.
@@ -60,7 +59,7 @@ Flake8 is a python wrapper around PyFlakes, Pydocstyle and Ned Batchelder’s Mc
 
 Flake8 is complementary to Pylint.
 
-##### Configuration & Utilisation
+##### Configuration & usage
 The Flake8 config file `tox.ini` is shared with other linters and is located at the project root directory.
 
 - Run flake8 :
@@ -71,7 +70,7 @@ flake8 [<FILE_OR_DIRECTORY>]
 #### Pylint
 Pylint is a quality checker for Python picking up on styling deviations from the PEP8 norm, code duplication, bugs... It also suggests alternatives to the code structure.
 
-##### Configuration & Utilisation
+##### Configuration & usage
 The Pylint config file `pylintrc` is located at the project root directory.
 
 - Run pylint :
@@ -82,7 +81,7 @@ pylint [<FILE_OR_DIRECTORY>]
 #### Pydocstyle
 Pydocstyle is a static analysis tool for checking compliance with Python docstring conventions. Pydocstyle supports most of PEP 257 out of the box, but it should not be considered a reference implementation.
 
-##### Configuration & Utilisation
+##### Configuration & usage
 The Pydocstyle config file `tox.ini` is shared with other linters and is located at the project root directory.
 
 - Run pydocstyle :
