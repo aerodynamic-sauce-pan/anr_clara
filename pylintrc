@@ -18,7 +18,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+init-hook='import sys; sys.path.append("/home/tlarcher/Documents/Stage_5A_MiS/git/anr_clara/utils")'
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -61,6 +61,7 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 disable=C0103,
+		E1120, # False positives
 		print-statement,
         parameter-unpacking,
         unpacking-in-except,
