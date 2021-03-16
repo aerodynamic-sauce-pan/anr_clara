@@ -10,7 +10,7 @@ configurable.
 import os
 import argparse
 import cv2
-from .tools import get_files_path, get_files_path_recursively
+from utils.tools import get_files_path, get_files_path_recursively
 
 
 PARSER = argparse.ArgumentParser()
