@@ -1,17 +1,7 @@
 """Train module for the AdapNet++ network.
 
-Self-Supervised Model Adaptation for Multimodal Semantic Segmentation.
-Copyright (C) 2018  Abhinav Valada, Rohit Mohan and Wolfram Burgard
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This module provides a full training function for tensorflow 1 models, given
+a configuration file and data.
 """
 
 import os
@@ -41,10 +31,9 @@ def train_func(config):
     module = importlib.import_module('models.'+config['model'])
     model_func = getattr(module, config['model'])
     data_list, _ = get_train_data(config)
-    resnet_name = 'resnet_v2_50'
     global_step = tf.Variable(0, trainable=False, name='Global_Step')
 
-    with tf.variable_scope(resnet_name):
+    with tf.variable_scope('resnet_v2_50'):
         model = model_func(num_classes=config['num_classes'],
                            learning_rate=config['learning_rate'],
                            decay_steps=config['max_iteration'],

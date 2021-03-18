@@ -1,18 +1,7 @@
 """Test module for the AdapNet++ network.
 
-Self-Supervised Model Adaptation for Multimodal Semantic Segmentation
-
-Copyright (C) 2018  Abhinav Valada, Rohit Mohan and Wolfram Burgard
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+This module provides a full testing function for tensorflow 1 models, given
+a configuration file and data.
 """
 
 import argparse
