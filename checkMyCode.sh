@@ -24,7 +24,7 @@ do
 	echo -e "\n\e[1m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 	echo -e "        Working in \e[92m $dir \e[0m... "
 	echo -e "\e[1m++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\e[0m"
-	liste=$(find $dir -type f -iname '*.py' -not -path '*Tesseract_pre_processing/*' -not -path '*tfidf_monkey_learn/*' -not -path '*ipynb_checkpoints/*')
+	liste=$(find $dir -maxdepth ${2-1} -type f -iname '*.py' -not -path '*Tesseract_pre_processing/*' -not -path '*tfidf_monkey_learn/*' -not -path '*ipynb_checkpoints/*')
 	for fichier in $liste;
 	do
 		if [[ $fichier != *"__init__.py"* ]] ; then
