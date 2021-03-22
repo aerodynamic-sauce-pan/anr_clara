@@ -38,6 +38,7 @@ def train_func(config):
                            learning_rate=config['learning_rate'],
                            decay_steps=config['max_iteration'],
                            power=config['power'],
+                           ignore_label=False,
                            global_step=global_step)
         images_pl = tf.placeholder(tf.float32, [None, config['height'],
                                                 config['width'], 3])
