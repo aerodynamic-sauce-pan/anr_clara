@@ -11,6 +11,13 @@
 - Voir si le script de Dao performe toujours convenablement sur des données equirectangulaires annotées, mais implique qu'on puisse fournir de telles données (cf. dernier point de la section UE4).
 
 ## Méthodes de synchronisation
+- Sources :
+	- [Synchronization of Multiple CameraVideos Using Audio-Visual Features](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5332301)
+	- [Synchronization and Rolling Shutter Compensationfor Consumer Video Camera Arrays](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5204340)
+	- [Forum IRVPA](https://ivrpa.org/forums/topic/exposure-sync-with-digital-stereo-cameras/)
+	- [Article Medium](https://medium.com/inatech/synchronize-multiple-cameras-to-capture-at-the-same-time-c285b520bd87)
+	- [Discussion steckexchange](https://video.stackexchange.com/questions/12312/low-cost-frame-synchronized-genlocked-3d-stereo-camera)
+	- [Blog comparatif de caméras](https://thefulldomeblog.com/2015/11/17/collection-of-360-video-rigs/)
 - Cette partie sera au finale assurée par l'équipe de Nice car cela n'est pas trivial compte tenu des caméra possédées :
 	- Pas de genlock pour les caméra Ricoh.
 	- Board de synchro arduino/raspberry pi existent pas impliqueraient de démonter les ricoh pour les mettre dessus ou d'obtenir d'autres objectifs.
