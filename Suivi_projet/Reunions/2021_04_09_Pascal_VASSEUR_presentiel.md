@@ -29,7 +29,7 @@
 - Une vague de sujets va arriver en Juillet pour un démarrage plus tôt que d'habitude en octobre : à scruter.
 - Pascal a des contacts à Montpellier, Grenoble et Brest (Luc Jolin à l'ENSTA) -> lui soumettre des propositions de thèse et il me dira s'il connait du monde dans le labo en question
 
-## Réunion
+# Réunion
 - Fin avril / Début mai il y aura une réunion de projet avec les équipes de Nice (et peut etre du Creusot).
 	- Objectifs impératifs à atteindre : 
 		- Obtenir une base d'images perspectives et/ou equirecangulaire de simulation de forêt
