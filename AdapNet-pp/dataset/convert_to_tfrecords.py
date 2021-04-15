@@ -4,8 +4,8 @@ This module aims at facilitating the creation of TFRecords from text files
 containing paths to data files.
 """
 
-import cv2
 import argparse
+import cv2
 import numpy as np
 import tensorflow as tf
 

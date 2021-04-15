@@ -1,0 +1,1 @@
+../TrainImages/train_bidon/RGB2/1.png ../TrainImages/train_bidon/SS2/label_1.png
