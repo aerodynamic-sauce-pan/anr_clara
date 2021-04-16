@@ -213,5 +213,17 @@
 - Environnement Dao :
 	- Confirmation de corruption de sauvegarde ou en tout cas d'un problème, d'où la prise de contact
 	
-## Mardi 13/04
-	
+## Mercredi 14/04
+- Réunion Pascal matin + Charles aprem
+- Expérimentations UE4 + AirSim
+- Rédaction CR
+
+## Jeudi 15/04
+- Expérimentations UE4 + AirSim
+- Expérimentation environnement Dao
+- Expérimentations plugin stereo 360 intégré à UE4
+
+## Vendredi 16/04
+- Expérimentations avec sorties du plugin stereo 360 intégré à UE4 utilisées dans 360SD Net
+	- Précision en environnement forestier très moyen voire mauvais. Mais il n'y avait pas de différence entre les images top et bot. Donc j'ai ré-essayé avec de la vraie stereo top/bot de foret trouvé sur internet, et ce n'était pas tellement mieux. => voir avec Charles si ce serait pertinent qu'il partage ses scripts perspective -> cubemap -> spherique -> equirectangulaire
+- Rapport
