@@ -123,6 +123,8 @@ def train_func(config):
 
         except tf.errors.OutOfRangeError:
             print('Epochs in dataset repeat < max_iteration')
+            saver.save(sess, os.path.join(config['checkpoint'],
+                                          'model.ckpt'), step-1)
             break
 
 

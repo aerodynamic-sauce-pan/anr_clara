@@ -26,9 +26,14 @@ PARSER.add_argument('-d', '--directory',
                     nargs='?',
                     default='',
                     help='Path to which the predictions should be saved.')
+PARSER.add_argument('--compare',
+                    nargs='?',
+                    default=False,
+                    help='Wether or not to commpare the prediction with'
+                         'the reference image.')
 
 
-def test_func(config, directory):
+def test_func(config, directory, raw_fps=[]):
     """Evaluate the AdapNet network with given test files.
 
     Args:
@@ -92,7 +97,17 @@ def test_func(config, directory):
                     for w in range(int(config['width'])):
                         newImg[h, w] = mymap[prediction[b, h, w]]
                 newImg = cv2.cvtColor(newImg, cv2.COLOR_BGR2RGB)
-                cv2.imshow(str(b + 1), newImg)
+
+                if raw_fps:
+                    b_sup = int(config['batch_size'])
+                    ref_img = cv2.resize(cv2.imread(raw_fps[step*b_sup+b]),
+                                        (640,480),
+                                        interpolation=cv2.INTER_CUBIC)
+                    cv2.imshow(str(b + 1), np.concatenate((newImg, ref_img),
+                                                        axis=1))
+                else:
+                    cv2.imshow(str(b + 1), newImg)
+
                 if bool(directory):
                     cv2.imwrite(directory + str(b + 21) + '.png', newImg)
                 cv2.waitKey(0)
@@ -119,9 +134,14 @@ def main():
     if args.config:
         file_address = open(args.config)
         config = yaml.load(file_address)
+        raw_fps = []
+        if args.compare is None:
+            with open(config['test_data_source']) as f:
+                raw_fps = f.readlines()
+                raw_fps = [fp.split(' ')[0] for fp in raw_fps]
+        test_func(config, args.directory, raw_fps)
     else:
         print('--config config_file_address missing')
-    test_func(config, args.directory)
 
 
 if __name__ == '__main__':

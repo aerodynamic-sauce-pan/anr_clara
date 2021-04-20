@@ -1,3 +1,1 @@
-../TestImages/synthetic/RGB/1.png ../TestImages/synthetic/RGB/1.png
-../TestImages/synthetic/RGB/2.png ../TestImages/synthetic/RGB/2.png
-../TestImages/synthetic/RGB/3.png ../TestImages/synthetic/RGB/3.png
+../reshaped_imgs/test_forest_equi_small_640x480.png ../reshaped_imgs/test_forest_equi_small_640x480.png
