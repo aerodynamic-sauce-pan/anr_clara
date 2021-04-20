@@ -67,8 +67,8 @@ def get_train_data(config):
                  next training data and label.
     """
     iterator = get_train_batch(config)
-    dataA, label = iterator.get_next()
-    return [dataA, label], iterator
+    next_data, next_label = iterator.get_next()
+    return [next_data, next_label], iterator
 
 
 def get_test_data(config):
@@ -86,8 +86,8 @@ def get_test_data(config):
                  next testing data and label.
     """
     iterator = get_test_batch(config)
-    dataA, label = iterator.get_next()
-    return [dataA, label], iterator
+    next_data, next_label = iterator.get_next()
+    return [next_data, next_label], iterator
 
 
 def compute_output_matrix(label_max, pred_max, output_matrix):
@@ -113,15 +113,15 @@ def compute_output_matrix(label_max, pred_max, output_matrix):
     for i in range(output_matrix.shape[0]):
         temp = pred_max == i
         temp_l = label_max == i
-        tp = np.logical_and(temp, temp_l)
+        tp_ = np.logical_and(temp, temp_l)
         temp[temp_l] = True  # Taking advantage of numpy arrays
-        fp = np.logical_xor(temp, temp_l)
+        fp_ = np.logical_xor(temp, temp_l)
         temp = pred_max == i
-        temp[fp] = False
-        fn = np.logical_xor(temp, temp_l)
-        output_matrix[i, 0] += np.sum(tp)
-        output_matrix[i, 1] += np.sum(fp)
-        output_matrix[i, 2] += np.sum(fn)
+        temp[fp_] = False
+        fn_ = np.logical_xor(temp, temp_l)
+        output_matrix[i, 0] += np.sum(tp_)
+        output_matrix[i, 1] += np.sum(fp_)
+        output_matrix[i, 2] += np.sum(fn_)
     return output_matrix
 
 
@@ -153,12 +153,13 @@ def parser(proto_data, num_classes):
         (tuple): Modalities (RGB images) and labels returns respectively as
                  float32 and int32.
     """
-    features = {'height': tf.FixedLenFeature((), tf.int64, default_value=0),
-                'width': tf.FixedLenFeature((), tf.int64, default_value=0),
-                'modality': tf.FixedLenFeature((), tf.string, default_value=""),
-                'label': tf.FixedLenFeature((), tf.string, default_value="")
+    features = {'height': tf.io.FixedLenFeature((), tf.int64, default_value=0),
+                'width': tf.io.FixedLenFeature((), tf.int64, default_value=0),
+                'modality': tf.io.FixedLenFeature((), tf.string,
+                                                  default_value=""),
+                'label': tf.io.FixedLenFeature((), tf.string, default_value="")
                 }
-    parsed_features = tf.parse_single_example(proto_data, features)
+    parsed_features = tf.io.parse_single_example(proto_data, features)
     modality = tf.decode_raw(parsed_features['modality'], tf.uint8)
     label = tf.decode_raw(parsed_features['label'], tf.uint8)
 

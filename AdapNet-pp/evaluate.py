@@ -33,7 +33,7 @@ PARSER.add_argument('--compare',
                          'the reference image.')
 
 
-def test_func(config, directory, raw_fps=[]):
+def test_func(config, directory, raw_fps):
     """Evaluate the AdapNet network with given test files.
 
     Args:
@@ -49,17 +49,20 @@ def test_func(config, directory, raw_fps=[]):
     # tf.reset_default_graph()
     with tf.variable_scope(resnet_name):
         model = model_func(num_classes=config['num_classes'], training=False)
-        images_pl = tf.placeholder(tf.float32,
-                                   [None, config['height'], config['width'], 3])
+        images_pl = tf.compat.v1.placeholder(tf.float32,
+                                             [None, config['height'],
+                                              config['width'],
+                                              3])
         model.build_graph(images_pl)
 
-    config1 = tf.ConfigProto()
+    config1 = tf.compat.v1.ConfigProto()
     config1.gpu_options.allow_growth = True
-    sess = tf.Session(config=config1)
-    sess.run(tf.global_variables_initializer())
-    import_variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
+    sess = tf.compat.v1.Session(config=config1)
+    sess.run(tf.compat.v1.global_variables_initializer())
+    import_variables = tf.compat.v1.get_collection(
+        tf.compat.v1.GraphKeys.GLOBAL_VARIABLES)
     print('total_variables_loaded:', len(import_variables))
-    saver = tf.train.Saver(import_variables)
+    saver = tf.compat.v1.train.Saver(import_variables)
     # saver = os.path.join(os.getcwd(),config['checkpoint'])+'.meta'
     # saver = tf.train.import_meta_graph(saver)
     saver.restore(sess, config['checkpoint'])
@@ -101,10 +104,10 @@ def test_func(config, directory, raw_fps=[]):
                 if raw_fps:
                     b_sup = int(config['batch_size'])
                     ref_img = cv2.resize(cv2.imread(raw_fps[step*b_sup+b]),
-                                        (640,480),
-                                        interpolation=cv2.INTER_CUBIC)
+                                         (640, 480),
+                                         interpolation=cv2.INTER_CUBIC)
                     cv2.imshow(str(b + 1), np.concatenate((newImg, ref_img),
-                                                        axis=1))
+                                                          axis=1))
                 else:
                     cv2.imshow(str(b + 1), newImg)
 
