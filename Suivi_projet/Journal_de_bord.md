@@ -227,3 +227,40 @@
 - Expérimentations avec sorties du plugin stereo 360 intégré à UE4 utilisées dans 360SD Net
 	- Précision en environnement forestier très moyen voire mauvais. Mais il n'y avait pas de différence entre les images top et bot. Donc j'ai ré-essayé avec de la vraie stereo top/bot de foret trouvé sur internet, et ce n'était pas tellement mieux. => voir avec Charles si ce serait pertinent qu'il partage ses scripts perspective -> cubemap -> spherique -> equirectangulaire
 - Rapport
+
+# Semaine 8
+## Lundi 19/04
+- Réunion Pascal
+	- Voir avec Charles pour récupérer au moins ses données d'images equirectangulaire UE4, au mieux son code en plus
+	- Comprendre avec certitude ce que caractérise l'entrée 'polar angle' du 360SD-Net
+	- Idem pour le Learnable Cost Volume
+	- Si besoin pour 360SD-Net, demander accès aux données du papier via leur formulaire en ligne
+- Contact Charles pour échange de code et données
+- Rapport
+- Ré-entraînement modèle Dao sur sa base d'app
+
+## Mardi 20/04
+- AdapNetpp
+	- Adressage des warnings d'apprentissage et test : tous n'ont pas pu être suprimés mais une bonne partie
+	- Correction de l'id GPU dans les fichiers .config. Attention à l'avenir à bien mettre 0
+- Investigation en profondeur de l'article
+- Rapport
+
+## Mercredi 21/04
+- Recherches fusion
+- Recherches Cartographie
+	- Voir avec Pascal pour des mots-clefs précis sinon ça n'existe peut-être pas
+	- Beaucoup des projets travaillent en vue aérienne + photogrammetry
+	- RL en simulation dans un micro-proc embarqué  ?
+- Investigation en profondeur du code de 350SD-Net
+
+## Jeudi 22/04
+- Idem (cf. notes mercredi)
+
+## Vendredi 23/04
+- Manipulations UE4.26 pour créer une 'copie label' de l'env de Charles càd où toutes les textures sont remplacées par des couleurs unies et où l'éclairage est simplifié comme dans le monde de Dao
+	- Reste à comprendre comment correctement régler l'éclairage des textures + voir avec Charles comment on peut changer l'aspect des éléments qui ne sont pas sélectionnables dans le monde mais qui sont dans le monde display.
+- Rapport
+
+# Semaine 9
+## Lundi 26/04
