@@ -264,3 +264,15 @@
 
 # Semaine 9
 ## Lundi 26/04
+- Réunion Pascal
+- Documentation Cartographie supplémentaire w/ conseils Pascal
+- Présentation Mise en Commun (+ base présentation bilan mi-parcours)
+
+## Mardi 27/04
+- Modification Redwood Forest :
+	- Textures unlit sans effet d'optique
+	- Enregistrement d'un parcours (images + pos & orientation dans le même dossier)
+- Etude article [Visual Appearance Analysis of Forest Scenes for Monocular SLAM]
+
+## Mercredi 28/04
+- Préparation réunion d'équipe
