@@ -273,6 +273,13 @@
 	- Textures unlit sans effet d'optique
 	- Enregistrement d'un parcours (images + pos & orientation dans le même dossier)
 - Etude article [Visual Appearance Analysis of Forest Scenes for Monocular SLAM]
+- Préparation réunions d'équipe
 
 ## Mercredi 28/04
-- Préparation réunion d'équipe
+- Préparation réunions d'équipe
+
+## Jeudi 29/04
+- Réunion mise en commun des ressources
+	- Flightmare : simulateur différent avec environnement foret dispo sur lequel il y aura un challenge ICRA bientôt. Fonctionne sous Unity.
+	- Synchro caméras ricoh theta : Guillaume et Renato s'en chargent, ils ont de pistes
+	- Dès la semaine, se rapprocher de Charles sur l'aspect Seg Sem et l'épauler pour qu'on arrive à trouver un (ou des) modèle(s) qui nous convienne(nt) à nous 2
