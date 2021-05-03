@@ -283,3 +283,9 @@
 	- Flightmare : simulateur différent avec environnement foret dispo sur lequel il y aura un challenge ICRA bientôt. Fonctionne sous Unity.
 	- Synchro caméras ricoh theta : Guillaume et Renato s'en chargent, ils ont de pistes
 	- Dès la semaine, se rapprocher de Charles sur l'aspect Seg Sem et l'épauler pour qu'on arrive à trouver un (ou des) modèle(s) qui nous convienne(nt) à nous 2
+
+## Vendredi 30/04
+- Préparation réunions d'équipe
+
+# Semaine 10
+## Lundi 03/05
