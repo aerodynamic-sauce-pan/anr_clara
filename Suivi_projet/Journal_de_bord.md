@@ -285,7 +285,13 @@
 	- Dès la semaine, se rapprocher de Charles sur l'aspect Seg Sem et l'épauler pour qu'on arrive à trouver un (ou des) modèle(s) qui nous convienne(nt) à nous 2
 
 ## Vendredi 30/04
-- Préparation réunions d'équipe
+- Préparation réunion techinque d'équipe
+- Lecture d'articles
 
 # Semaine 10
 ## Lundi 03/05
+- Réunion Pascal
+- Préparation réunion techinque d'équipe
+
+## Mardi 04/05
+- Réunion techinque d'équipe
