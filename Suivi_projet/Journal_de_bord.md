@@ -295,3 +295,32 @@
 
 ## Mardi 04/05
 - Réunion techinque d'équipe
+
+# Mercredi 05/05
+- Lecture article
+- Prise en main script Charles :
+	- Bug non solvés
+
+# Jeudi 06/05
+- Debuggage script Charles avec son aide
+- Contact Rida
+- Lecture article
+
+# Vendredi 07/05
+- Reunion Rida
+- Tests script Charles
+
+# Semaine 11
+## Lundi 10/05
+- Travail sur le script de Charles
+	- A faire : partager le script à Rida, il est prêt pour le benchmarking
+- Paramétrage Redwood Forest pour tenter de régler le pb de reconstruction equi (gestion de la lumière) : échec
+	- Rida et Charles en soutien mais ça se termine par du tatonnage. Voir si on peut exporter des paramètres. Sinon au pire : télécharger les fichiers de config ou tout l'env de Charles (lourd)
+
+## Mardi 11/05
+- Paramétrage de Redwood Forest (again) : toujours échec
+	- Demande visio Charles pour comparer les settings à la main, quitte à télécharger son environnement (comparer les fichier Config/DefaultEngine.ini aussi)
+- Debuggage + nettoyage script Charles capture\_dataset\_6.py
+	- Partage Rida pour benchmark + proposition intégration Look Up Table pour warp cube -> equi de Rida
+	
+## Mercredi 12/05
