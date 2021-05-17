@@ -1,7 +1,4 @@
 # Ressources
-## Videos
-[Bitterlich Method - Relaskop](https://www.youtube.com/watch?v=VggN0uWfEtQ)
-
 ## Data & code
 No data or code available
 
@@ -82,4 +79,4 @@ Evaluation of pixel - wise detection of trunk pixels as an average of 1.44m pixe
 - It's weird because the test data manual annotation looks oddly precise for a human carried task
 
 # Angle count sampling (Bitterlich sampling)
-
+[Bitterlich Method - Relaskop](https://www.youtube.com/watch?v=VggN0uWfEtQ)
