@@ -324,3 +324,9 @@
 	- Partage Rida pour benchmark + proposition intégration Look Up Table pour warp cube -> equi de Rida
 	
 ## Mercredi 12/05
+- Etude d'articles
+
+# Semaine 12
+# Lundi 17/05
+- Etude d'articles
+- Réunion Pascal
