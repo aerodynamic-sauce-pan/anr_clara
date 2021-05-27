@@ -11,4 +11,4 @@
 
 
 # Prochaine réunion
-- Mardi 24/05 : heure à préciser
+- Mardi 25/05 : heure à préciser
