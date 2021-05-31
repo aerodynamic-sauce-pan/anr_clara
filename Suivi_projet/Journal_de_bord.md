@@ -327,6 +327,33 @@
 - Etude d'articles
 
 # Semaine 12
-# Lundi 17/05
+## Lundi 17/05
 - Etude d'articles
 - Réunion Pascal
+- Rédaction résumé d'articles
+- Definition et étude de la solution de Bitterlich sur papier en préparation de l'implémentation (destiné au cahier de recherche)
+
+## Mardi 18/05
+- Développement 1ère approche de cartogrpahie inspirée par la méthode de Bitterlich
+- Réunion avec Charles pour régler les problèmes d'éclairage du monde UE4
+	- Certaines dimensions (trop grandes) de perspectives -> equi font apparaitre le problème d'illumination. les dimensions < 1500x1500 -> 1500x750 ont l'air ok
+	- La visionneuse d'images de windows "Photos" crée des déchirures dans l'image qu'il n'y a pas vraiment en réalité
+
+## Mercredi 19/05
+- Conception + Dev bitterlich
+
+## Jeudi 20/05
+- Dev bitterlich
+
+## Vendredi 20/05
+- Rdv médical matin + urgence PC Daniel aprem
+
+# Semaine 13
+## Lundi 24/05
+- férié
+
+## Mardi 25/05
+- Dev bitterlich
+
+## Mercredi 26/06
+- Paufinage bitterlich
