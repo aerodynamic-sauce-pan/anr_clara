@@ -357,28 +357,3 @@
 
 ## Mercredi 26/06
 - Paufinage bitterlich
-
-## Jeudi 27/06
-- Réunion pascal
-  - Présentation Bitterlich v1, définition des évolutions et objectifs prochains
-- Correction comportements innatendus bitterlich v1
-- Construction papier de la prise en compte des vraies depth map.
-
-## Vendredi 28/06
-- Rapport
-- Dev prise en compte vraies depth map
-
-# Semaine 14
-## Lundi 31/05
-- Amélioration de bitterlich
-  - Adaptation pour les .dep
-  - Amélioration de l'affichage
-  - Correction de bugs mineurs
-  - Nettoyage du code (sauf lignes trop longues)
-  - Debut amélioration de la précision : pas de conclusion en l'état. Problème d'estimation de la profondeur à la source car il faut remonter jusqu'à une aggregation de pixels
-
-## Mardi 01/06
-- Inspection nouveau script Charles avec les Look Up Table
-- Contact Charles pour savoir comment récupérer les métriques des arbres d'une scène (pos + girth) afin d'évaluer bitterlich par métrique quantitative.
-- Visio Charles
-- Prise en main nouveau script Charles qui intègre les LUT
