@@ -357,3 +357,140 @@
 
 ## Mercredi 26/06
 - Paufinage bitterlich
+
+## Jeudi 27/06
+- Réunion pascal
+  - Présentation Bitterlich v1, définition des évolutions et objectifs prochains
+- Correction comportements innatendus bitterlich v1
+- Construction papier de la prise en compte des vraies depth map.
+
+## Vendredi 28/06
+- Rapport
+- Dev prise en compte vraies depth map
+
+# Semaine 14
+## Lundi 31/05
+- Amélioration de bitterlich
+  - Adaptation pour les .dep
+  - Amélioration de l'affichage
+  - Correction de bugs mineurs
+  - Nettoyage du code (sauf lignes trop longues)
+  - Debut amélioration de la précision : pas de conclusion en l'état. Problème d'estimation de la profondeur à la source car il faut remonter jusqu'à une aggregation de pixels
+
+## Mardi 01/06
+- Inspection nouveau script Charles avec les Look Up Table
+- Contact Charles pour savoir comment récupérer les métriques des arbres d'une scène (pos + girth) afin d'évaluer bitterlich par métrique quantitative.
+- Visio Charles
+- Prise en main nouveau script Charles qui intègre les LUT
+
+## Mercredi 02/06
+- Réunion Pascal
+  - Projet
+  - Thèses
+- Début v2 bitterlich
+  - Amélioration estimation de grosseur
+- Nouveau script Charles
+  - Construction analyse descendante nouveau script Charles + modification
+  - Essai : ultra rapide
+
+## Jeudi 03/06
+- UE4
+  - Tentative d'accès aux meshes d'arbres : fail car tout est 'absorbé' dans une entité PFS_RW_Redwood_Trees qui les représente tous. Documentation sur l'accès aux objets générés de manière procédurale sous UE4 : aucune réponse. Cela signifie que pour l'instant on ne peut pas établir de métrique et one st en 'non supervisé'.
+  - Contact par **mail** de l'entreprise créatrice du monde. Sur leur page UE4 ils répondent encore de nos jours et assez rapidement, hopefully par mail aussi.
+- Développement v2 bitterlich
+- Paramétrage autologin linux (à distance)
+
+## Vendredi
+- Amélioration bitterlich par depth à la source + superposition d'affichage pour estimer la précision de notre script visuellement.
+- Aide Farah mise en place accès à distance sous demande de sa tutrice.
+- Installation Orb Slam 3
+  - Difficultés à la conciliation des dépendences et librairies. Aide de Sarah.
+
+# Semaine 15
+## Lundi 07/06
+- Tests Orb Slam 3
+  - Exemples impressionants, précision de l'ordre du centimètre, cas d'utilisation à la fois perspective et fisheye, mono et stereo.
+- Réunion Pascal concernant sujets de thèse trouvés
+- Tests solution UE4
+
+## Mardi 08/06
+- Tests solution UE4
+- Génération dataset equi via nouveau script avec LUT
+- Nouvelle prise de contact avec le créateur de l'environnement UE4
+
+## Mercredi 09/06
+
+## Jeudi 10/06
+- Intégration dataset à orb slam 3
+	- recherche de comment intégrer des vues equi à la place de vues fisheye ou perspective
+	- contact reda paramètres caméra
+- Documentation caméra et calibration
+- Choix thèses
+
+## Vendredi 11/06
+- Intégration dataset à orb slam 3
+- RDV médical
+
+## Dimanche 13/06
+- Intégration dataset à orb slam 3
+	- Résiste encore, erreur openCV comme s'il y avait des problèmes de dimension ou des chargements de fichiers vides. Mais CSV et dataset corrects.
+	- Mono TUMV_vi cassé : il n'y a plus de points descripteurs
+
+# Semaine 16
+## Lundi 14/06
+- Re-build complet de ORB-SLAM3
+	- Mono sur TUM-vi ne produit toujours pas de points descripteurs. -> Tjrs comme ça ???
+	- Données UE4 à la place de celle d'euroc en cam0 mono : bloqué sur la phase d'initialisation "trying to initialize" mais pas étonnant car vues equi resized en 752x480 -> le modèle de caméra pinhole paramétré ne colle pas.
+	- Update : sans resize on est toujours bloqué sur l'initialisation.
+		- IDEE : refaire des captures plus longues avec une phases stationnaire au début à l'instar de EuRoC_MH01 ou TUM_vi_room1
+- Le retour du build en mauvaise version de airsim et forestwood...
+- 2e retour du créateur de Redwood Forest : n'a pas les compétences pour répondre à notre question
+	- Demande à la communauté d'UE4 via post sur forum
+- Génération nouveau dataset avec phase stationnaire qu début ou petits déplacements selon les axes de liberté pour faciliter la phase d'initialisation d'ORB-SLAM3²	
+	- Au mieux AirSim est capable de produire 3.4 im/s.
+
+## Mardi 15/06
+- La phase semi-stationnaire au début du dataset aide à la phase d'initialisation, on voit que l'algo a des débuts de matching mais il n'y a pas assez d'images similaires générées par airsim, tout va trop vite, les fps ne sont pas assez élevés.
+  - L'application d'un flou gaussien à kernel 3x3 facilite l'initialisation des descripteurs comparés aux images brutes dont l'approximation des valeur est 'plus proche voisin'.
+	- Refaire le même dataset en prenant plus son temps.
+	- Il y avait un problème d'ordre dans les images après renommage : ça marche ! mais la capture a une sacade trop forte : il faut augmenter les fps ou diminuer la vitesse de déplacement
+
+## Mercredi 16/06
+- Développement script d'augmentation artificielle du nombre de positions de airsim_rec.csv par interpolation pour avoir plus de captures selon un tracé grossier défini, sans avoir à enregistrer de nouveau tracé où il faudrait diminuer la vitesse de déplacement pour avoir plus de frames proches.
+- Réponse sur le forum de UE4 concernant l'extraction des instances d'arbres
+
+## Jeudi 17/06
+- Dev script augmenteur de csv
+- Discussion avec Charles + lecture source pour les transformations géométriques entre equi et fisheye/perspective
+- Documentation blueprints par rapport à la 1ère réponse sur le forum UE4
+
+## Vendredi 18/06
+- Finitions script augmenteur de csv + tests unitaires
+- Génération d'un nouveau dataset plus précis (1174 éléments pour un équivalent ~12fps airsim)
+	- Meilleure robustesse d'ORBSLAM3 mais encore des pertes de cartes lors des grands déplacements (toujours trop grands). Lorsque les cartes sont répéres : 600+ points d'intérêts en moyenne pour 3000 descripteurs demandés.
+	- Meilleurs résultats sur un modèle de caméra perspective PinHole que sur fisheye KannalaBrandt8 car dans le 1er cas les descripteurs sont cherchés partout alors que dans le 2e cas seule une partie de l'image (gauche) est cherchée car correspond à une vue en déformation fisheye. En fait une equi est comme la concaténation de 2 vues fisheye à 180° degrés : devant et derrière.
+
+# Semaine 17
+## Lundi 21/06
+- Rapport
+- Documentation SLAM
+- Entretien thèse Huawei
+
+## Mardi 22/06
+- Exploration solutions blueprint UE4 pour récupérer les vérité terrains
+	- Pas encore ce qu'on veut, équivalent des requêtes via airsim
+- Reprise de la solution C++ : de nouveau le problème de compilation du monde
+	- Proposition à Charles de la tenter de son côté car pour résoudre le problème de compilation, je devrais réinitialiser mon monde alors que j'esplore la piste blueprint qui est prometteuse
+- Génération dataset réduit concentré sur la phase d'initialisation avec plus de fps
+
+## Mercredi 23/06
+- Mise à jour solution blueprint
+- Nouveau dataset à équivalent 24fps bien adapté à ORBSLAM, pas de cassure de la map une fois établie, entre 400 et 600 matches et une quinzaine de keyframes, récupération des positions et quaternions (supposés) des frames et keyframes
+	- Reste à déterminer avec précision ce que ça qualifie
+
+## Jeudi 24/06
+- Finition de la solution blueprint, confirmation de la conformité des données ressorties et exportation des données.
+- Nouvelle capture à partir du PlayerStart placé à l'origine du monde pour les coordonnées AirSim soient raccord avec celles des arbres
+
+## Vendredi 25/06
+- Récupération des grosseurs des 12 prototypes d'arbres dans le viewport : vue side + mouse middle button
