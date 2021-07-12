@@ -494,3 +494,28 @@
 
 ## Vendredi 25/06
 - Récupération des grosseurs des 12 prototypes d'arbres dans le viewport : vue side + mouse middle button
+- Dév script de conversion des données UE4 vers csv.
+
+# Semaine 18
+## Lundi 28/06
+- Réunion Pascal
+- Finitions script de conversion des données UE4 vers csv.
+- Dév tests du script de conversion des données UE4 vers csv.
+- Dév script construction d'une carte vérité terrain
+
+## Mardi 29/06 - Vendredi 09/07 (Semaine 19)
+- Développement et optimisation du script de cartographie vérité terrain
+- Développement de scripts unitaires.
+- Adaptation de la cartographie GT pour une succession d'images pour approcher une vidéo
+	- Comparatif de la carte avec l'image side by side
+	- Travail sur l'optimisation du script pour approcher l'observation temps réel
+	- La version en coordonnées cartésiennes marche bien mais celle en coord. polaires fait n'importe pas, et au bout d'un certain temps 'accumule' des erreurs en mettant tous les arbres en clusters sans faire apparaitre les nouveaux -> effets de bord ?
+
+# Semaine 20
+## Lundi 12/07
+- Première production de métriques RMSE et absolues
+	- Problème de dépassement de bornes avec les angles à cause d'un offset dans get_angle2D pour satisfaire pyplot
+	- Problème dans l'erreur sur les diamètres : beaucoup trop grande
+	- Les positions sont globalement cohérentes mais revoir les axes de l'affichage bitterlich
+- Affichage temps réel du drone sur une carte vérité terrain des arbres
+- Réunion Pascal
