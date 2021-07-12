@@ -8,6 +8,8 @@
 - Récap travail (cf. JdB).
 
 ## Mapping
+- Vue polaire/radar laissée de côté au profit d'une vue en référentiel cartésien car instabilité dans la visualisation vérité terrain
+    - Sera peut-être reprise si j'arrive à trouver la source du problème
 - Démonstration de l'affichage temps réel du drone se déplaçant sur la carte d'arbres issue de la vérité terrain
     - Temps réel
     - Ajouter l'affichage de la trace du drone
