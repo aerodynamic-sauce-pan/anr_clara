@@ -1,5 +1,4 @@
 """Module for tree mapping inspired by the Bitterlich method.
-
 This module provides an ad-hoc solution, inspired by the Bitterlich method,
 to construct a 2D map of trees based on RGB, Depth estimation and Semantic
 Segmentation views of an equirectangular projection of a 360° scene.
@@ -17,8 +16,6 @@ import cv2 as cv
 from PIL import Image
 from matplotlib import pyplot as plt
 import matplotlib.transforms as mtransforms
-
-from IPython.display import display
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-s', '--source',
@@ -92,10 +89,8 @@ PARSER.add_argument('-v', '--verbose',
 
 def get_tree_percentage(section, eps=5):
     """Return the percentage of tree pixels in the image.
-
     Args:
         imgSS (ndarray): Semantic segmentation image.
-
     Returns:
         (float): Percentage of pixels belonging to trees.
     """
@@ -105,14 +100,11 @@ def get_tree_percentage(section, eps=5):
 
 def get_smaller_nearest_multiple(numerator, denominator):
     """Return next smaller multiple.
-
     Finds the next smaller value of denominator such that the remainder of
     numerator divided by denominator is null.
-
     Args:
         numerator (int): numerator.
         denominator (int): denominator.
-
     Returns:
         denominator (int): next smaller multiple.
     """
@@ -123,18 +115,15 @@ def get_smaller_nearest_multiple(numerator, denominator):
 
 def cut_img_in_height(img, hstep, return_boundaries=False):
     """Crop an image array evenly around its vertical center.
-
     Given an image or numpy array, returns a vertically cropped section of
     it, centered around its vertical center. The height of the section is
     determined from the number of height samples (N_HEIGHT) and the size of
     vertical samples (hstep).
-
     Args:
         img (ndarray): input image.
         hstep (int): height sample size.
         return_boundaries (bool): Whether to return the section's inf
                                   and sup boundaries. Defaults to False.
-
     Returns:
         (ndarray): cropped image.
     """
@@ -205,11 +194,9 @@ def cut_img_in_height(img, hstep, return_boundaries=False):
 
 def cart2pol(x, y):
     """Convert 2D cartesian coordinates to polar coordinates.
-
     Args:
         x (int or float): cartesian x coordinate.
         y (int or float): cartesian y coordinate.
-
     Returns:
         rho, phi (float, float): polar coordinates (radius and angle).
     """
@@ -220,11 +207,9 @@ def cart2pol(x, y):
 
 def pol2cart(phi, rho):
     """Convert polar coordinates to 2D cartesian coordinates.
-
     Args:
         phi (int, float): polar angle coordinate.
         rho (int, float): polar radius coordinate.
-
     Returns:
         x, y (float, float): 2D cartesian coordinates.
     """
@@ -235,20 +220,16 @@ def pol2cart(phi, rho):
 
 def x_equi_to_angle(x):
     """Return an angle equivalence of an equirectangular image.
-
     Given an equirectangular image width value (resp. list of values), returns
     an angle correspondence (resp. list of angles). This method relies on the
     fact that the width of an equirectangular image equates 360°.
-
     Args:
         x (int or list): width value or list of width values.
     """
     def transform(val):
         """Transform an equirectangular width value into an angle equivalence.
-
         Args:
             val (int): width value.
-
         Returns:
             (float): angle correspondence.
         """
@@ -260,19 +241,8 @@ def x_equi_to_angle(x):
     return -(np.round(transform(x)))
 
 
-def get_mean_tree_depth(section):
-    ind = np.where(section['SS'] == TREE_GRAY)
-
-    if len(ind[0]) & len(ind[1]) == 0:
-        mean_tree_depth = np.nan
-    else:
-        mean_tree_depth = np.mean(section['Depth'][ind])
-    return mean_tree_depth
-
-
 def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     """Return a tree occupation table of the scene.
-
     Based on the Sem. Seg. & Depth views of the scene, and the dimension
     sample sizes, returns a 3D tree occupation table where values, defined in
     [0, 1], express the percentage of tree pixels. Such a process can be
@@ -284,20 +254,19 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     view, thus artificially adding a third dimension (depth) to the SS view.
         - For each masked SS view, sections of size hstep*wstep are extracted
     and the ratio of tree pixels in it is reported in the occupation table.
-
     Args:
         imgSS_clip (ndarray): Cropped Seg. Sem. view of the scene.
         imgDepth_clip (ndarray): Cropped Depth view of the scene.
         dstep (int): size of depth samples.
         hstep (int): size of height samples.
         wstep (int): size of width samples.
-
     Returns:
         tab (ndarray): 3D occupation table.
     """
-    tab = {'tree_ratio': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH)),
-           'depth': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH))}
+    tab = np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH))
+    perimeters = []
     for d in range(1, N_SAMPLE_DEPTH+1, 1):
+        perimeters.append(2*pi*(d*dstep - dstep//2))
         mask = np.where((imgDepth_clip < (d-1)*dstep) | (imgDepth_clip > d*dstep), 0, 1)
         imgSS_masked = imgSS_clip*mask
         if VERBOSE:
@@ -319,10 +288,8 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
 
         for h in range(1, N_HEIGHT+1, 1):
             for w in range(1, N_SAMPLE_WIDTH+1, 1):
-                section = {'SS': imgSS_masked[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep],
-                           'Depth': imgDepth_clip[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep]}
-                tab['tree_ratio'][d-1, h-1, w-1] = get_tree_percentage(section['SS'])
-                tab['depth'][d-1, h-1, w-1] = get_mean_tree_depth(section)
+                section = imgSS_masked[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep]
+                tab[d-1, h-1, w-1] = get_tree_percentage(section)
                 # if VERBOSE:
                 #     plt.figure(figsize=(10, 10))
                 #     plt.subplot(1,2,1)
@@ -333,9 +300,8 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     return tab
 
 
-def get_tree_map(tab, dstep, wstep, thresh=0.3):
+def get_tree_map(tab, dstep, wstep):
     """Return a tree map containing trees position and girth.
-
     The tree map is a dictionnary containing polar coordinates and girth of
     every selected tree of the scene.
     From a given 3D occupation table, the method applies a statistical rule
@@ -349,56 +315,40 @@ def get_tree_map(tab, dstep, wstep, thresh=0.3):
     As for the polar coordinates, the radius r corresponds to the depth sample,
     and the angle phi to the angle mapped with the equirectangular image width
     ([0, WIDTH] -> [-180°, +180°]).
-
     Args:
         tab (ndarray): 3D occupation table.
         hstep (int): size of depth samples.
         wstep (int): size of width samples.
-
     Returns:
         tree_map (dict): tree map containing trees polar coordinates and girth.
     """
     tree_map = {'polar_coord': [(0, 0)],
-                'girth': [0],
-                'girth_pixels' : [0]}
-    tab2 = copy(tab)
+                'girth': [0]}
     if METHOD == 'median':
-        tab2['tree_ratio'] = np.median(tab2['tree_ratio'], axis=1)  # Option 1 : median along height
-        tab2['depth'] = np.nanmedian(tab2['depth'], axis=1)
+        tab2 = np.median(tab, axis=1)  # Option 1 : median along height
     elif METHOD == 'mean':
-        tab2['tree_ratio'] = np.mean(tab2['tree_ratio'], axis=1)  # Option 2 : mean along height
-        tab2['depth'] = np.nanmean(tab2['depth'], axis=1)
-    display('tab2 : ', tab2)
-    for d in range(tab2['tree_ratio'].shape[0]):
+        tab2 = np.mean(tab, axis=1)  # Option 2 : mean along height
+
+    for d in range(tab2.shape[0]):
         patch = {'start': [],
                  'stop': [],
                  'state': False}
-        perimeters = []
-        for w in range(tab2['tree_ratio'].shape[1]):
-            if (tab2['tree_ratio'][d, w] > thresh) and not patch['state']:
+        for w in range(tab2.shape[1]):
+            if (tab2[d, w] > 0.2) and not patch['state']:
                 patch['start'].append(w)
                 patch['state'] = True
-                perimeters.append(2*pi*tab2['depth'][d, w])
-            if (tab2['tree_ratio'][d, w] <= thresh) and patch['state']:
+            if (tab2[d, w] <= 0.2) and patch['state']:
                 patch['stop'].append(w)
                 patch['state'] = False
                 tree_map['polar_coord'].append((x_equi_to_angle(w*wstep-wstep//2), (d+1)*dstep))
-                if METHOD == 'median':
-                    perimeter = np.mean(perimeters)
-                elif METHOD == 'mean':
-                    perimeter = np.mean(perimeters)
-                tree_map['girth'].append((patch['stop'][-1]-patch['start'][-1])*perimeter/N_SAMPLE_WIDTH)
-                tree_map['girth_pixels'].append((patch['stop'][-1]-patch['start'][-1])*wstep)
-                perimeters = []
+                tree_map['girth'].append((patch['stop'][-1]-patch['start'][-1])*(d+1)*dstep/wstep)
     return tree_map
 
 
 def plot_map(tree_map):
     """Display a tree map on a radar like map.
-
     Displays trees position and girth on a polar projected map. Each tree is
     positioned on a depth level line at an angle relative to the 0° line.
-
     Args:
         tree_map (dictionnary): map of selected trees containing their polar
                                 coordinates and girth.
@@ -449,7 +399,6 @@ def main():
         raise TypeError('Depth file format not handled. Please use one of the'
                         'following: dep, png, jpg, jpeg, bmp.')
     imgSS = cv.cvtColor(cv.imread(SOURCE[2]), cv.COLOR_BGR2GRAY)
-    imgRGB = cv.cvtColor(cv.imread(SOURCE[0]), cv.COLOR_BGR2RGB)
 
     imgSS_clip = copy(imgSS)
     imgSS_clip = cut_img_in_height(imgSS_clip, hstep)
@@ -471,28 +420,10 @@ def main():
         plt.show()
 
     tab = get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep)
-    display('tab depth : ', tab['depth'])
     tree_map = get_tree_map(tab, dstep, wstep)
 
     plot_map(tree_map)
 
-    np.savetxt('tree_map_polar_coord', tree_map['polar_coord'])
-    np.savetxt('tree_map_girth', tree_map['girth'])
-
-    # A déplacer dans un fichier séparé
-    ## Visualisation superposée de la carte et de la vue equi rgb
-    plt.figure(figsize=(12,12))
-    plt.imshow(imgRGB)
-    print(list(tree_map.keys()))
-    for pol_point, girth in zip(tree_map['polar_coord'], tree_map['girth_pixels']):
-        print('girth pixels : ', girth)
-        #cart_point = pol2cart(pol_point[0], pol_point[1])
-        #print('cart_point : ', cart_point)
-        cart_x = np.round((pol_point[0]+180)*WIDTH/360)
-        plt.plot(cart_x, HEIGHT//2, 'P', markerfacecolor='w', markeredgewidth=.5, markeredgecolor=(0,0,0,1))
-        x = np.arange(cart_x-girth//2, cart_x+girth//2, 1)
-        plt.plot(x, len(x)*[HEIGHT//2], '-b')
-    plt.show()
 
 if __name__ == '__main__':
     args = PARSER.parse_args()

@@ -83,7 +83,7 @@ def reshape_imgs(img_fps, shape, out_dir, default_dir=True, verbose=False):
     for img_fp in img_fps:
         img_reshaped = reshape_img(img_fp, shape)
         fp, ext = os.path.splitext(img_fp)
-        fn = fp.split('/')[-1] + '_' + str(shape[0]) + 'x' + str(shape[1]) + ext
+        fn = fp.split('/')[-1] + ext# + '_' + str(shape[0])# + 'x' + str(shape[1]) + ext
         if default_dir:
             fp = '/'.join(fp.split('/')[:-1]) + '/' + out_dir
         else:
