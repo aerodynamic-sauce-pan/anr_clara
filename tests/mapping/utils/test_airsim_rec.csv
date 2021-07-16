@@ -1,0 +1,4 @@
+VehicleName	TimeStamp	POS_X	POS_Y	POS_Z	Q_W	Q_X	Q_Y	Q_Z	ImageFile
+machine_1	1	0.0	0.0	-0.0	0.10	-0.0	0.0	0.90	img_machine_1__0_1.png
+machine_1	4	0.0	0.0	-2.0	0.20	-0.0	0.0	0.80	img_machine_1__0_4.png
+machine_1	8	-0.50	3.0	-0.0	0.30	-0.0	0.0	1.0	img_machine_1__0_8.png

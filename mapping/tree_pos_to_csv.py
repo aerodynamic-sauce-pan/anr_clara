@@ -95,7 +95,7 @@ def parse_a_line(line, cols):
     df_line.loc[0, 'Name'] = get_name(line)
     df_line.loc[0, 'ID'] = get_ID(line)
     for i in range(1, 4, 1):
-        df_line.loc[0, cols[i+1]] = get_loc(line)[i-1]
+        df_line.loc[0, cols[i+1]] = round(np.float(get_loc(line)[i-1])*1e-2, 5)
         df_line.loc[0, cols[i+4]] = get_rot(line)[i-1]
         df_line.loc[0, cols[i+7]] = get_sca(line)[i-1]
     return df_line
@@ -117,7 +117,7 @@ def parse_to_csv(src_log, cols):
         for line in tqdm(lines):
             parsed_line = parse_a_line(line, cols)
             out_csv = out_csv.append(parsed_line.iloc[0, :], ignore_index=True)
-        out_csv.loc[:, 'ID':] = out_csv.loc[:, 'ID':].astype(np.floatmgzn64)
+        out_csv.loc[:, 'ID':] = out_csv.loc[:, 'ID':].astype(np.float64)
         return out_csv
 
 

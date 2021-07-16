@@ -1,0 +1,2 @@
+LogBlueprintUserMessages: [BP_Collector_C_0] Component : comp1 of ID #0 |  Location : X=10 Y=20 Z=30 | Rotation : P=-1.1 Y=-1.2 R=-1.3 | Scale : X=0.1 Y=0.2 Z=0.3
+LogBlueprintUserMessages: [BP_Collector_C_0] Component : comp2 of ID #1 |  Location : X=11 Y=21 Z=31 | Rotation : P=1.1 Y=1.2 R=1.3 | Scale : X=1 Y=2 Z=3

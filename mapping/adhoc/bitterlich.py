@@ -13,12 +13,14 @@ from math import pi
 import pylab as pl
 import numpy as np
 import cv2 as cv
+import pandas as pd
 
 from PIL import Image
 from matplotlib import pyplot as plt
+from IPython.display import display
 import matplotlib.transforms as mtransforms
 
-from IPython.display import display
+from mapping.adhoc.geometry import pol2cart, checkerboard
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-s', '--source',
@@ -84,23 +86,18 @@ PARSER.add_argument('-m', '--method',
                     help='Method used to determine tree positions on the'
                          'occupation map. Available methods : mean, median.')
 
+PARSER.add_argument('--view',
+                    nargs='*',
+                    type=str,
+                    default='polar',
+                    help='Cartesian or polar projection.')
+
 PARSER.add_argument('-v', '--verbose',
                     nargs='*',
                     action='store',
                     help='If true, prints out additional info.')
 
 
-def get_tree_percentage(section, eps=5):
-    """Return the percentage of tree pixels in the image.
-
-    Args:
-        imgSS (ndarray): Semantic segmentation image.
-
-    Returns:
-        (float): Percentage of pixels belonging to trees.
-    """
-    tree_pix = ((TREE_GRAY-eps <= section) & (section <= TREE_GRAY+eps)).sum()
-    return tree_pix / (section.shape[0]*section.shape[1])
 
 
 def get_smaller_nearest_multiple(numerator, denominator):
@@ -203,34 +200,25 @@ def cut_img_in_height(img, hstep, return_boundaries=False):
     return img_cut
 
 
-def cart2pol(x, y):
-    """Convert 2D cartesian coordinates to polar coordinates.
+def get_tree_percentage(section, eps=5):
+    """Return the percentage of tree pixels in the image.
 
     Args:
-        x (int or float): cartesian x coordinate.
-        y (int or float): cartesian y coordinate.
+        imgSS (ndarray): Semantic segmentation image.
 
     Returns:
-        rho, phi (float, float): polar coordinates (radius and angle).
+        (float): Percentage of pixels belonging to trees.
     """
-    rho = np.sqrt(x**2 + y**2)
-    phi = np.arctan2(y, x)
-    return (rho, phi)
+    tree_pix = ((TREE_GRAY-eps <= section) & (section <= TREE_GRAY+eps)).sum()
+    return tree_pix / (section.shape[0]*section.shape[1])
 
 
-def pol2cart(phi, rho):
-    """Convert polar coordinates to 2D cartesian coordinates.
-
-    Args:
-        phi (int, float): polar angle coordinate.
-        rho (int, float): polar radius coordinate.
-
-    Returns:
-        x, y (float, float): 2D cartesian coordinates.
-    """
-    x = rho * np.cos(phi)
-    y = rho * np.sin(phi)
-    return (x, y)
+def get_mean_tree_depth(section, tree_percent, eps=5):
+    if tree_percent == 0:
+        return np.nan
+    else:
+        ind = np.where((TREE_GRAY-eps <= section['SS']) & (section['SS'] <= TREE_GRAY+eps))
+        return np.mean(section['Depth'][ind])
 
 
 def x_equi_to_angle(x):
@@ -260,16 +248,6 @@ def x_equi_to_angle(x):
     return -(np.round(transform(x)))
 
 
-def get_mean_tree_depth(section):
-    ind = np.where(section['SS'] == TREE_GRAY)
-
-    if len(ind[0]) & len(ind[1]) == 0:
-        mean_tree_depth = np.nan
-    else:
-        mean_tree_depth = np.mean(section['Depth'][ind])
-    return mean_tree_depth
-
-
 def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     """Return a tree occupation table of the scene.
 
@@ -297,11 +275,13 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     """
     tab = {'tree_ratio': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH)),
            'depth': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH))}
+
     for d in range(1, N_SAMPLE_DEPTH+1, 1):
         mask = np.where((imgDepth_clip < (d-1)*dstep) | (imgDepth_clip > d*dstep), 0, 1)
-        imgSS_masked = imgSS_clip*mask
+        imgSS_masked = (imgSS_clip.copy()*mask).astype(np.uint8)
+        print('imgSS_masked: ', type(imgSS_masked), type(imgSS_masked[0,0]), imgSS_masked.shape, np.min(imgSS_masked), np.max(imgSS_masked))
         if VERBOSE:
-            _, axs = plt.subplots(2, 1)
+            _, axs = plt.subplots(3, 1)
             axs[0].imshow(255*mask, cmap='gray')
             axs[0].set_title('Depth mask of range [{0} - {1}] (max depth {2})'
                              .format((d-1)*dstep, d*dstep, DMAX))
@@ -315,14 +295,40 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
             np.append(axs, axs[1].secondary_xaxis('top', functions=(x_equi_to_angle, x_equi_to_angle)))
             axs[-1].set_xlabel('Real world angle')
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+            from time import time
+            kernel_hstep = np.ones(hstep, np.uint8)
+            kernel_oblique_right = np.array([[0, 0, 1],
+                                             [0, 0, 1], 
+                                             [0, 1, 1],
+                                             [0, 1, 0],
+                                             [1, 1, 0],
+                                             [1, 0, 0],
+                                             [1, 0, 0]]).astype(np.uint8)
+            kernel_oblique_left = kernel_oblique_right.T
+            kernel_check = checkerboard((5,5)).astype(np.uint8)
+            img_morpho = cv.morphologyEx(imgSS_masked, cv.MORPH_OPEN, kernel_check)
+            img_morpho = cv.dilate(img_morpho, kernel_hstep, 1)
+            img_morpho = cv.morphologyEx(img_morpho, cv.MORPH_OPEN, kernel_hstep)
+            img_morpho = cv.dilate(img_morpho, kernel_oblique_right, 1)
+            img_morpho = cv.dilate(img_morpho, kernel_oblique_left, 1)
+            imgSS_masked = img_morpho.copy()
+            axs[2].imshow(img_morpho, cmap='gray')
+            axs[2].set_title('Seg sem vertical filtered')
             plt.show()
 
         for h in range(1, N_HEIGHT+1, 1):
             for w in range(1, N_SAMPLE_WIDTH+1, 1):
                 section = {'SS': imgSS_masked[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep],
                            'Depth': imgDepth_clip[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep]}
-                tab['tree_ratio'][d-1, h-1, w-1] = get_tree_percentage(section['SS'])
-                tab['depth'][d-1, h-1, w-1] = get_mean_tree_depth(section)
+                tree_percent = get_tree_percentage(section['SS'])
+                tab['tree_ratio'][d-1, h-1, w-1] = tree_percent
+                tab['depth'][d-1, h-1, w-1] = get_mean_tree_depth(section, tree_percent)
+
+                a = np.argwhere(tab['tree_ratio'][d-1, h-1, w-1] != 0)
+                b = np.argwhere(np.isnan(tab['depth'][d-1, h-1, w-1]))
+                if len(np.intersect1d(a, b)) > 0:
+                    print('============== NAN TREES ==============')
                 # if VERBOSE:
                 #     plt.figure(figsize=(10, 10))
                 #     plt.subplot(1,2,1)
@@ -362,38 +368,45 @@ def get_tree_map(tab, dstep, wstep, thresh=0.3):
                 'girth': [0],
                 'girth_pixels' : [0]}
     tab2 = copy(tab)
+    print('tab2 : ', tab2['tree_ratio'].shape, tab2['depth'].shape)
     if METHOD == 'median':
         tab2['tree_ratio'] = np.median(tab2['tree_ratio'], axis=1)  # Option 1 : median along height
         tab2['depth'] = np.nanmedian(tab2['depth'], axis=1)
     elif METHOD == 'mean':
         tab2['tree_ratio'] = np.mean(tab2['tree_ratio'], axis=1)  # Option 2 : mean along height
         tab2['depth'] = np.nanmean(tab2['depth'], axis=1)
-    display('tab2 : ', tab2)
+    print('tab2 après mean : ', tab2['tree_ratio'].shape, tab2['depth'].shape)
     for d in range(tab2['tree_ratio'].shape[0]):
         patch = {'start': [],
                  'stop': [],
                  'state': False}
-        perimeters = []
+        # perimeters = []
         for w in range(tab2['tree_ratio'].shape[1]):
             if (tab2['tree_ratio'][d, w] > thresh) and not patch['state']:
                 patch['start'].append(w)
                 patch['state'] = True
-                perimeters.append(2*pi*tab2['depth'][d, w])
+                # perimeters.append(2*pi*tab2['depth'][d, w])
             if (tab2['tree_ratio'][d, w] <= thresh) and patch['state']:
                 patch['stop'].append(w)
                 patch['state'] = False
-                tree_map['polar_coord'].append((x_equi_to_angle(w*wstep-wstep//2), (d+1)*dstep))
-                if METHOD == 'median':
-                    perimeter = np.mean(perimeters)
-                elif METHOD == 'mean':
-                    perimeter = np.mean(perimeters)
+                tree_map['polar_coord'].append((x_equi_to_angle(w*wstep-wstep//2), tab2['depth'][d, patch['start'][-1]+(patch['stop'][-1]-patch['start'][-1])//2]))#(d+1)*dstep)) # Ne va pas la sélection du depth. -> soit faire un mean sur la largeur des tab2['depth'], soit remonter axu valeurs d'origine des données depth pour les pixels dans l'intervalle large d'arbre à epsilon près; mais dans ce cas -> se demander quel était l'intéret de calculer des moyennes de depth
+                # if METHOD == 'median':
+                #     perimeter = np.mean(perimeters)
+                # elif METHOD == 'mean':
+                #     perimeter = np.mean(perimeters)
+                perimeter = 2*pi*tree_map['polar_coord'][-1][1]
                 tree_map['girth'].append((patch['stop'][-1]-patch['start'][-1])*perimeter/N_SAMPLE_WIDTH)
                 tree_map['girth_pixels'].append((patch['stop'][-1]-patch['start'][-1])*wstep)
-                perimeters = []
+                # perimeters = []
+    
+    # a = np.where(tab['tree_ratio'][d-1, h-1, w-1] == 0)
+    # b = np.where(np.isnan(tab['depth'][d-1, h-1, w-1]))
+    # if not bool(np.sum(a[0]-b[0]) == 0):
+    #     print('======= NAN TREES =======')
     return tree_map
 
 
-def plot_map(tree_map):
+def plot_map_pol(tree_map):
     """Display a tree map on a radar like map.
 
     Displays trees position and girth on a polar projected map. Each tree is
@@ -434,13 +447,53 @@ def plot_map(tree_map):
     plt.show()
 
 
+def plot_map_cart(tree_map):
+    """Display a tree map on a 2D cartesian map.
+
+    Args:
+        tree_map (dictionnary): map of selected trees containing their polar
+                                coordinates and girth.
+    """
+    plt.figure(figsize=(8, 8))
+    ax = pl.subplot(111)
+    plt.plot(0, 0, '+b', label='drone')
+    plt.text(1, 1, 'Drone', c='b')
+    for point, girth in zip(tree_map['polar_coord'][1:], tree_map['girth'][1:]):
+        x, y = pol2cart(np.deg2rad(point[0]), point[1])
+        x, y = x, -y
+        plt.plot(x, y, 'ro', label='trees')
+        plt.text(x, y, '%d, %d\n%.2fm' % (int(x), int(y), girth))
+        circle = pl.Circle((x, y), girth, color="red", alpha=0.4)
+        ax.add_artist(circle)
+    plt.suptitle('Tree map from equirectangular ({0}x{1}) '
+                 'RGB depth.'.format(WIDTH, HEIGHT), fontweight='bold')
+    plt.title('Sampling : depth={0}, width={1}, height={2})\n'
+              'Height samples considered to locate trees : {3}\n'
+              'Max depth : {4}'.format(N_SAMPLE_DEPTH, N_SAMPLE_WIDTH,
+                                       N_SAMPLE_HEIGHT, N_HEIGHT, DMAX))
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.grid(True, c='deepskyblue')
+    plt.show()
+
+
+def export_prediction(tree_map, timestamp):
+    angles = [val[0] for val in tree_map['polar_coord']]
+    distances = [val[1] for val in tree_map['polar_coord']]
+    timestamps = [timestamp]*len(angles)
+    girths = tree_map['girth']
+    csv = pd.DataFrame(np.column_stack([timestamps, angles, distances, girths]),
+                       columns=['TimeStamp', 'Tree_angle', 'Tree_distance', 'Tree_girth'])
+    csv.to_csv('tree_prediction.csv', sep=',', index=False)
+
+
 def main():
     """Run main function and handle arguments."""
     dstep = DMAX//N_SAMPLE_DEPTH
     wstep = WIDTH//N_SAMPLE_WIDTH
     hstep = HEIGHT//N_SAMPLE_HEIGHT
 
-    _, ext = os.path.splitext(SOURCE[1])
+    timestamp, ext = os.path.splitext(SOURCE[1])
+    timestamp = timestamp.split('/')[-1]
     if ext in ['.png', 'jpg', 'jpeg', 'bmp']:
         imgDepth = cv.cvtColor(cv.imread(SOURCE[1]), cv.COLOR_BGR2GRAY)
     elif ext == '.dep':
@@ -449,18 +502,16 @@ def main():
         raise TypeError('Depth file format not handled. Please use one of the'
                         'following: dep, png, jpg, jpeg, bmp.')
     imgSS = cv.cvtColor(cv.imread(SOURCE[2]), cv.COLOR_BGR2GRAY)
-    imgRGB = cv.cvtColor(cv.imread(SOURCE[0]), cv.COLOR_BGR2RGB)
 
-    imgSS_clip = copy(imgSS)
-    imgSS_clip = cut_img_in_height(imgSS_clip, hstep)
-    imgDepth_clip = copy(imgDepth)
-    imgDepth_clip = cut_img_in_height(imgDepth_clip, hstep)
+    imgSS_clip = cut_img_in_height(imgSS.copy(), hstep)
+    imgDepth_clip = cut_img_in_height(copy(imgDepth), hstep)
 
     imgSS_clip[np.where(imgDepth_clip >= DMAX)] = 255
-    imgDepth_clip[np.where(imgDepth_clip >= DMAX)] = 255
+    imgDepth_clip[np.where(imgDepth_clip >= DMAX)] = 255  # passer à np.nan
 
+    
     if VERBOSE:
-        plt.figure(figsize=(18, 18))
+        plt.figure(figsize=(22, 22))
         plt.subplot(1, 2, 1)
         plt.imshow(imgSS, cmap='gray')
         plt.title('Semantic segmentation')
@@ -471,28 +522,27 @@ def main():
         plt.show()
 
     tab = get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep)
-    display('tab depth : ', tab['depth'])
     tree_map = get_tree_map(tab, dstep, wstep)
+    export_prediction(tree_map, timestamp)
 
-    plot_map(tree_map)
+    if VIEW == 'polar':
+        plot_map_pol(tree_map)
+    elif VIEW == 'cartesian':
+        plot_map_cart(tree_map)
 
-    np.savetxt('tree_map_polar_coord', tree_map['polar_coord'])
-    np.savetxt('tree_map_girth', tree_map['girth'])
 
-    # A déplacer dans un fichier séparé
-    ## Visualisation superposée de la carte et de la vue equi rgb
-    plt.figure(figsize=(12,12))
-    plt.imshow(imgRGB)
-    print(list(tree_map.keys()))
-    for pol_point, girth in zip(tree_map['polar_coord'], tree_map['girth_pixels']):
-        print('girth pixels : ', girth)
-        #cart_point = pol2cart(pol_point[0], pol_point[1])
-        #print('cart_point : ', cart_point)
-        cart_x = np.round((pol_point[0]+180)*WIDTH/360)
-        plt.plot(cart_x, HEIGHT//2, 'P', markerfacecolor='w', markeredgewidth=.5, markeredgecolor=(0,0,0,1))
-        x = np.arange(cart_x-girth//2, cart_x+girth//2, 1)
-        plt.plot(x, len(x)*[HEIGHT//2], '-b')
-    plt.show()
+    # # A déplacer dans un fichier séparé
+    # ## Visualisation superposée de la carte et de la vue equi rgb
+    # plt.figure(figsize=(12,12))
+    # plt.imshow(imgRGB)
+    # for pol_point, girth in zip(tree_map['polar_coord'], tree_map['girth_pixels']):
+    #     #cart_point = pol2cart(pol_point[0], pol_point[1])
+    #     #print('cart_point : ', cart_point)
+    #     cart_x = np.round((pol_point[0]+180)*WIDTH/360)
+    #     plt.plot(cart_x, HEIGHT//2, 'P', markerfacecolor='w', markeredgewidth=.5, markeredgecolor=(0,0,0,1))
+    #     x = np.arange(cart_x-girth//2, cart_x+girth//2, 1)
+    #     plt.plot(x, len(x)*[HEIGHT//2], '-b')
+    # plt.show()
 
 if __name__ == '__main__':
     args = PARSER.parse_args()
@@ -500,6 +550,7 @@ if __name__ == '__main__':
     METHOD = args.method
     DMAX = args.dmax
     VERBOSE = args.verbose is not None
+    VIEW = args.view[0]
     WIDTH, HEIGHT = Image.open(SOURCE[2]).size
     # /!\ If WIDTH or HEIGHT is a prime number, their corresponding N_SAMPLE will fall to 1 -> drop the ratio constraint and work with remainders
     N_SAMPLE_DEPTH = get_smaller_nearest_multiple(DMAX, args.nsd)
