@@ -21,6 +21,7 @@ from IPython.display import display
 import matplotlib.transforms as mtransforms
 
 from mapping.adhoc.geometry import pol2cart, checkerboard
+from sklearn import cluster
 
 PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-s', '--source',
@@ -209,7 +210,7 @@ def get_tree_percentage(section, eps=5):
     Returns:
         (float): Percentage of pixels belonging to trees.
     """
-    tree_pix = ((TREE_GRAY-eps <= section) & (section <= TREE_GRAY+eps)).sum()
+    tree_pix = ((TREE_GRAY-eps <= section) & (section <= TREE_GRAY+eps)).sum() 
     return tree_pix / (section.shape[0]*section.shape[1])
 
 
@@ -217,7 +218,7 @@ def get_mean_tree_depth(section, tree_percent, eps=5):
     if tree_percent == 0:
         return np.nan
     else:
-        ind = np.where((TREE_GRAY-eps <= section['SS']) & (section['SS'] <= TREE_GRAY+eps))
+        ind = np.where((section['SS'] >= TREE_GRAY-eps) & (section['SS'] <= TREE_GRAY+eps) & (section['Depth'] != BACKGROUND_GRAY))
         return np.mean(section['Depth'][ind])
 
 
@@ -276,10 +277,112 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
     tab = {'tree_ratio': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH)),
            'depth': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH))}
 
+    n, m = imgDepth_clip.shape
+    X = imgDepth_clip.copy()
+    X[(imgSS_clip >= TREE_GRAY+5) | (imgSS_clip <= TREE_GRAY-5)] = 255 # Anything that isn't segmented as trees is relayed to the background
+    X = X.reshape((n*m, 1))
+    kmeans_dep = cluster.KMeans(n_clusters = N_SAMPLE_DEPTH)
+    kmeans_dep.fit(X)
+    centers = np.uint8(kmeans_dep.cluster_centers_)
+    print('centers : ', centers)
+    Xseg = kmeans_dep.predict(X)
+    Xseg = np.array([centers[n] for n in Xseg])
+    Xseg = np.uint8(Xseg.reshape(n, m))
+    centers = np.sort(centers.flatten())
+    for d in range(1, N_SAMPLE_DEPTH+1, 1):
+        imgSS_masked = imgSS_clip.copy()
+        imgSS_masked[np.where(Xseg != centers[d-1])] = 0
+
+        if VERBOSE:
+            _, axs = plt.subplots(2, 1)
+
+            axs[0].imshow(imgSS_masked, cmap='gray')
+            axs[0].set_title('Mask applied to Seg Sem')
+            axs[0].set_xlabel('Image width')
+            np.append(axs, axs[0].secondary_xaxis('top', functions=(x_equi_to_angle, x_equi_to_angle)))
+            axs[-1].set_xlabel('Real world angle')
+            axs[0].set_title(f'dmax : {DMAX}')
+            plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+            kernel_hstep = np.ones(hstep, np.uint8)
+            kernel_oblique_right = np.array([[0, 0, 1],
+                                             [0, 0, 1],
+                                             [0, 1, 1],
+                                             [0, 1, 0],
+                                             [1, 1, 0],
+                                             [1, 0, 0],
+                                             [1, 0, 0]]).astype(np.uint8)
+            kernel_oblique_left = np.array([[1, 0, 0],
+                                            [1, 0, 0],
+                                            [1, 1, 0],
+                                            [0, 1, 0],
+                                            [0, 1, 1],
+                                            [0, 0, 1],
+                                            [0, 0, 1]]).astype(np.uint8)
+            kernel_check = checkerboard((5,5)).astype(np.uint8)
+            img_morpho = cv.morphologyEx(imgSS_masked, cv.MORPH_OPEN, kernel_check)
+            img_morpho = cv.dilate(img_morpho, kernel_hstep, 1)
+            img_morpho = cv.morphologyEx(img_morpho, cv.MORPH_OPEN, kernel_hstep)
+            img_morpho = cv.dilate(img_morpho, kernel_oblique_right, 1)
+            img_morpho = cv.dilate(img_morpho, kernel_oblique_left, 1)
+            #imgSS_masked = img_morpho.copy()
+            axs[1].imshow(img_morpho, cmap='gray')
+            axs[1].set_title('Seg sem vertical filtered')
+            plt.show()
+
+        for h in range(1, N_HEIGHT+1, 1):
+            for w in range(1, N_SAMPLE_WIDTH+1, 1):
+                section = {'SS': imgSS_masked[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep],
+                           'Depth': imgDepth_clip[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep]}
+                tree_percent = get_tree_percentage(section['SS'])
+                tab['tree_ratio'][d-1, h-1, w-1] = tree_percent
+                tab['depth'][d-1, h-1, w-1] = get_mean_tree_depth(section, tree_percent)
+
+                a = np.argwhere(tab['tree_ratio'][d-1, h-1, w-1] != 0)
+                b = np.argwhere(np.isnan(tab['depth'][d-1, h-1, w-1]))
+                if len(np.intersect1d(a, b)) > 0:
+                    print('============== NAN TREES ==============')
+                # if VERBOSE:
+                #     plt.figure(figsize=(10, 10))
+                #     plt.subplot(1,2,1)
+                #     plt.imshow(imgSS_masked, cmap='gray')
+                #     plt.subplot(1,2,2)
+                #     plt.imshow(imgSS_masked[(h-1)*hstep:h*hstep, (w-1)*wstep:w*wstep], cmap='gray')
+                #     plt.show()
+    return tab
+
+
+def get_occupation_table_old(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
+    """Return a tree occupation table of the scene.
+
+    Based on the Sem. Seg. & Depth views of the scene, and the dimension
+    sample sizes, returns a 3D tree occupation table where values, defined in
+    [0, 1], express the percentage of tree pixels. Such a process can be
+    explained as follows :
+        - Every dimension (D, H, W) has been sampled to define sections,
+    according to parameters nsd, nsw and nsh. Sample sizes of depth, height and
+    width are respectively dstep, hstep and wstep.
+        - For each depth sample, a mask is created and applied to the SS
+    view, thus artificially adding a third dimension (depth) to the SS view.
+        - For each masked SS view, sections of size hstep*wstep are extracted
+    and the ratio of tree pixels in it is reported in the occupation table.
+
+    Args:
+        imgSS_clip (ndarray): Cropped Seg. Sem. view of the scene.
+        imgDepth_clip (ndarray): Cropped Depth view of the scene.
+        dstep (int): size of depth samples.
+        hstep (int): size of height samples.
+        wstep (int): size of width samples.
+
+    Returns:
+        tab (ndarray): 3D occupation table.
+    """
+    tab = {'tree_ratio': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH)),
+           'depth': np.zeros((N_SAMPLE_DEPTH, N_HEIGHT, N_SAMPLE_WIDTH))}
+
     for d in range(1, N_SAMPLE_DEPTH+1, 1):
         mask = np.where((imgDepth_clip < (d-1)*dstep) | (imgDepth_clip > d*dstep), 0, 1)
         imgSS_masked = (imgSS_clip.copy()*mask).astype(np.uint8)
-        print('imgSS_masked: ', type(imgSS_masked), type(imgSS_masked[0,0]), imgSS_masked.shape, np.min(imgSS_masked), np.max(imgSS_masked))
         if VERBOSE:
             _, axs = plt.subplots(3, 1)
             axs[0].imshow(255*mask, cmap='gray')
@@ -296,7 +399,6 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
             axs[-1].set_xlabel('Real world angle')
             plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
-            from time import time
             kernel_hstep = np.ones(hstep, np.uint8)
             kernel_oblique_right = np.array([[0, 0, 1],
                                              [0, 0, 1], 
@@ -312,7 +414,7 @@ def get_occupation_table(imgSS_clip, imgDepth_clip, dstep, hstep, wstep):
             img_morpho = cv.morphologyEx(img_morpho, cv.MORPH_OPEN, kernel_hstep)
             img_morpho = cv.dilate(img_morpho, kernel_oblique_right, 1)
             img_morpho = cv.dilate(img_morpho, kernel_oblique_left, 1)
-            imgSS_masked = img_morpho.copy()
+            #imgSS_masked = img_morpho.copy()
             axs[2].imshow(img_morpho, cmap='gray')
             axs[2].set_title('Seg sem vertical filtered')
             plt.show()
@@ -376,6 +478,7 @@ def get_tree_map(tab, dstep, wstep, thresh=0.3):
         tab2['tree_ratio'] = np.mean(tab2['tree_ratio'], axis=1)  # Option 2 : mean along height
         tab2['depth'] = np.nanmean(tab2['depth'], axis=1)
     print('tab2 après mean : ', tab2['tree_ratio'].shape, tab2['depth'].shape)
+    print(tab2['depth'][0,:])
     for d in range(tab2['tree_ratio'].shape[0]):
         patch = {'start': [],
                  'stop': [],
@@ -389,7 +492,13 @@ def get_tree_map(tab, dstep, wstep, thresh=0.3):
             if (tab2['tree_ratio'][d, w] <= thresh) and patch['state']:
                 patch['stop'].append(w)
                 patch['state'] = False
-                tree_map['polar_coord'].append((x_equi_to_angle(w*wstep-wstep//2), tab2['depth'][d, patch['start'][-1]+(patch['stop'][-1]-patch['start'][-1])//2]))#(d+1)*dstep)) # Ne va pas la sélection du depth. -> soit faire un mean sur la largeur des tab2['depth'], soit remonter axu valeurs d'origine des données depth pour les pixels dans l'intervalle large d'arbre à epsilon près; mais dans ce cas -> se demander quel était l'intéret de calculer des moyennes de depth
+                print('w*wstep-wstep//2 : ', w*wstep-wstep//2)
+                w_middle = patch['start'][-1]+(patch['stop'][-1]-patch['start'][-1])//2
+                tree_map['polar_coord'].append((x_equi_to_angle(w*wstep-wstep//2), tab2['depth'][d, w_middle]))#(d+1)*dstep)) # Ne va pas la sélection du depth. -> soit faire un mean sur la largeur des tab2['depth'], soit remonter axu valeurs d'origine des données depth pour les pixels dans l'intervalle large d'arbre à epsilon près; mais dans ce cas -> se demander quel était l'intéret de calculer des moyennes de depth
+                print('polar_coord : ', tree_map['polar_coord'][-1], pol2cart(np.deg2rad(tree_map['polar_coord'][-1][0]), tree_map['polar_coord'][-1][1]))
+                
+                tree_map['equi_coord'].append(w*wstep-wstep//2)
+                
                 # if METHOD == 'median':
                 #     perimeter = np.mean(perimeters)
                 # elif METHOD == 'mean':
@@ -462,7 +571,7 @@ def plot_map_cart(tree_map):
         x, y = pol2cart(np.deg2rad(point[0]), point[1])
         x, y = x, -y
         plt.plot(x, y, 'ro', label='trees')
-        plt.text(x, y, '%d, %d\n%.2fm' % (int(x), int(y), girth))
+        plt.text(x, y, '%d, %d\n%.2fm\n%d' % (int(x), int(y), girth, point[0]))
         circle = pl.Circle((x, y), girth, color="red", alpha=0.4)
         ax.add_artist(circle)
     plt.suptitle('Tree map from equirectangular ({0}x{1}) '
@@ -488,7 +597,8 @@ def export_prediction(tree_map, timestamp):
 
 def main():
     """Run main function and handle arguments."""
-    dstep = DMAX//N_SAMPLE_DEPTH
+    print('N_SAMPLE_DEPTH : ', N_SAMPLE_DEPTH)
+    dstep = 100//N_SAMPLE_DEPTH#DMAX//N_SAMPLE_DEPTH
     wstep = WIDTH//N_SAMPLE_WIDTH
     hstep = HEIGHT//N_SAMPLE_HEIGHT
 
@@ -502,14 +612,15 @@ def main():
         raise TypeError('Depth file format not handled. Please use one of the'
                         'following: dep, png, jpg, jpeg, bmp.')
     imgSS = cv.cvtColor(cv.imread(SOURCE[2]), cv.COLOR_BGR2GRAY)
+    imgRGB = cv.cvtColor(cv.imread(SOURCE[0]), cv.COLOR_BGR2RGB)
 
     imgSS_clip = cut_img_in_height(imgSS.copy(), hstep)
     imgDepth_clip = cut_img_in_height(copy(imgDepth), hstep)
+    print('imgDepth_clip : ', imgDepth_clip.shape)
 
-    imgSS_clip[np.where(imgDepth_clip >= DMAX)] = 255
-    imgDepth_clip[np.where(imgDepth_clip >= DMAX)] = 255  # passer à np.nan
+    imgSS_clip[np.where(imgDepth_clip >= DMAX)] = BACKGROUND_GRAY
+    imgDepth_clip[np.where(imgDepth_clip >= DMAX)] = BACKGROUND_GRAY  # passer à np.nan
 
-    
     if VERBOSE:
         plt.figure(figsize=(22, 22))
         plt.subplot(1, 2, 1)
@@ -553,7 +664,7 @@ if __name__ == '__main__':
     VIEW = args.view[0]
     WIDTH, HEIGHT = Image.open(SOURCE[2]).size
     # /!\ If WIDTH or HEIGHT is a prime number, their corresponding N_SAMPLE will fall to 1 -> drop the ratio constraint and work with remainders
-    N_SAMPLE_DEPTH = get_smaller_nearest_multiple(DMAX, args.nsd)
+    N_SAMPLE_DEPTH = args.nsd#get_smaller_nearest_multiple(DMAX, args.nsd)
     N_SAMPLE_WIDTH = get_smaller_nearest_multiple(WIDTH, args.nsw)
     if args.nsh == 0:
         N_SAMPLE_HEIGHT = HEIGHT
@@ -561,4 +672,5 @@ if __name__ == '__main__':
         N_SAMPLE_HEIGHT = get_smaller_nearest_multiple(HEIGHT, args.nsh)
     N_HEIGHT = args.nh
     TREE_GRAY = 140
+    BACKGROUND_GRAY = 255
     main()

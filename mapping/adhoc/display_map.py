@@ -107,7 +107,7 @@ def plot_tree_map_cart(tree_map, girths, dmax, display_path=None,
     print(f'Unique trees : {girths.shape[0]}.')
     print(f'Unique drone pose : {len(timestamps)}.')
     print(f'Unique distances : {tree_map.shape[0]}.')
-    
+
     plt.figure(figsize=(10, 10))
     trace = np.array([[0], [0]])
     for idx, ts in enumerate(timestamps[:10]):

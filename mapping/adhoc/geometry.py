@@ -16,6 +16,21 @@ def cart2pol(x, y):
     return (rho, phi)
 
 
+def pol2cart(phi, rho):
+    """Convert polar coordinates to 2D cartesian coordinates.
+
+    Args:
+        phi (int, float): polar angle coordinate (in radians).
+        rho (int, float): polar radius coordinate.
+
+    Returns:
+        x, y (float, float): 2D cartesian coordinates.
+    """
+    x = rho * np.cos(phi)
+    y = rho * np.sin(phi)
+    return (x, y)
+
+
 def compute_distance(p1, p2, norm='euclidian2D'):
     if norm == 'euclidian2D':
         return round(np.sqrt(np.sum(np.square(p1-p2))), 5)
@@ -54,17 +69,3 @@ def get_angle2D(p1, p2):
     elif (x_diff >= 0) and (y_diff < 0):
         return -angle + 450
 
-
-def pol2cart(phi, rho):
-    """Convert polar coordinates to 2D cartesian coordinates.
-
-    Args:
-        phi (int, float): polar angle coordinate (in radians).
-        rho (int, float): polar radius coordinate.
-
-    Returns:
-        x, y (float, float): 2D cartesian coordinates.
-    """
-    x = rho * np.cos(phi)
-    y = rho * np.sin(phi)
-    return (x, y)

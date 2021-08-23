@@ -93,14 +93,15 @@ def convert(f, record_name, mean_flag):
         mean = np.zeros(cv2.imread(f[0][0]).shape, np.float32)
 
     for name in f:
+        print('convert :', name) 
         modality = cv2.imread(name[0])
-        modality = cv2.resize(modality, (640, 480),
+        modality = cv2.resize(modality, (1024, 512),
                               interpolation=cv2.INTER_CUBIC)
         if mean_flag:
             mean += modality
 
         label = cv2.imread(name[1])
-        label = cv2.resize(label, (640, 480), interpolation=cv2.INTER_CUBIC)
+        label = cv2.resize(label, (1024, 512), interpolation=cv2.INTER_CUBIC)
         label = cv2.cvtColor(label, cv2.COLOR_BGR2GRAY)
         try:
             assert len(label.shape) == 2

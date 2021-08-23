@@ -151,7 +151,7 @@ class AdapNet_pp(network_base.Network):
 
         self.up1 = self.conv_batchN_relu(tf.concat((self.deconv_up1,
                                                     self.skip2), 3),
-                                         3, 1, 256, name='conv89')
+                                        3, 1, 256, name='conv89')
         self.up1 = self.conv_batchN_relu(self.up1, 3, 1, 256, name='conv96')
         with tf.compat.v1.variable_scope('conv16'):
             self.deconv_up2 = self.tconv2d(self.up1, 4, 256, 2)
