@@ -1,0 +1,28 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "ComputerVision",
+  "EnableCollisionPassthrogh": false,
+  "LogMessagesVisible": true,
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      },
+      {
+        "ImageType": 2,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      },
+      {
+        "ImageType": 5,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      }
+    ]
+  }
+}

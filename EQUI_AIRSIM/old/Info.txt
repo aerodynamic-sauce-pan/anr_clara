@@ -1,0 +1,4 @@
+# Airsim
+## Depth
+The depth metric in .dep files is the meter : https://github.com/Microsoft/AirSim/issues/1054
+

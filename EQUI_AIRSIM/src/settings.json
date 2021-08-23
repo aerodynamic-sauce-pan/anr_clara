@@ -1,0 +1,185 @@
+{
+    "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+    "SettingsVersion": 1.2,
+	"Vehicles": {
+	"machine_1": {
+		  "VehicleType": "ComputerVision",
+		   "X": 0, "Y": 0, "Z": 0,
+		   "Cameras": {
+			"front_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": 0, "Roll": 0, "Yaw": 0
+			},
+			"left_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": 0, "Roll": 0, "Yaw": -90
+			},
+			"right_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": 0, "Roll": 0, "Yaw": 90
+			},
+			"top_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": 90, "Roll": 0, "Yaw": 0
+			},
+			"bottom_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": -90, "Roll": 0, "Yaw": 0
+			},
+			"back_custom": {
+			"CaptureSettings": [
+			    {
+			      "ImageType": 0,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 2,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    },
+			    {
+			      "ImageType": 5,
+			      "Width": 1000,
+			      "Height": 1000,
+			      "FOV_Degrees": 90
+			    }
+			  ],
+			  "X": 0, "Y": 0, "Z": -1,
+			  "Pitch": 0, "Roll": 0, "Yaw": 180
+			}						
+		  }
+	}
+	},
+	    "CameraDefaults": {
+                        "CaptureSettings": [
+                                              {
+                                                "ImageType": 0,
+                                                "Width": 1000,
+                                                "Height": 1000,
+                                                "FOV_Degrees": 90
+                                              },
+                                              {
+                                                "ImageType": 2,
+                                                "Width": 1000,
+                                                "Height": 1000,
+                                                "FOV_Degrees": 90
+                                              },
+                                              {
+                                                "ImageType": 5,
+                                                "Width": 1000,
+                                                "Height": 1000,
+                                                "FOV_Degrees": 90
+                                              }
+                                            ]
+
+        },
+	"SimMode" : "ComputerVision",
+  "SubWindows": [
+    {"WindowID": 0, "ImageType": 5, "CameraName": "top_custom", "Visible": true},
+    {"WindowID": 1, "ImageType": 5, "CameraName": "front_custom", "Visible": true},
+    {"WindowID": 2, "ImageType": 5, "CameraName": "bottom_custom", "Visible": true}
+  ]
+}

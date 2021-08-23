@@ -1,0 +1,37 @@
+{
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "EnableCollisionPassthrogh": false,
+  "LogMessagesVisible": true,
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "ImageType": 0,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      },
+      {
+        "ImageType": 2,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      },
+      {
+        "ImageType": 5,
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+      }
+    ]
+  },
+  "Vehicles": {
+    "drone0": {
+      "VehicleType": "SimpleFlight",
+      "DefaultVehicleState": "Armed",
+      "AllowAPIAlways": true,
+      "X": 0, "Y": 0, "Z": 0,
+      "Pitch": 0, "Roll": 0, "Yaw": 0
+      }
+  }
+}

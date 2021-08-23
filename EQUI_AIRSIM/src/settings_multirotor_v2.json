@@ -1,0 +1,99 @@
+
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "EnableCollisionPassthrogh": false,
+  "LogMessagesVisible": true,
+   "Vehicles": {
+    "drone_1": {
+      "VehicleType": "SimpleFlight",
+      "DefaultVehicleState": "Armed",
+      "EnableCollisionPassthrogh": false,
+      "EnableCollisions": true,
+      "AllowAPIAlways": true,
+      "Cameras": {
+        "front_center_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],
+          "X": 0, "Y": 0, "Z": -1,
+          "Pitch": 0, "Roll": 0, "Yaw": 0
+        },
+        "left_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],
+          "X": 0.0, "Y": 0, "Z": -1,
+          "Pitch": 0.0, "Roll": 0.0, "Yaw": -90.0
+        },
+        "right_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],
+          "X": 0.0, "Y": 0, "Z": -1,
+          "Pitch": 0.0, "Roll": 0.0, "Yaw": 90.0
+        },
+        "top_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],
+          "X": 0.0, "Y": 0, "Z": -1,
+          "Pitch": 90.0, "Roll": 0.0, "Yaw": 0
+        },
+        "bottom_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],        
+          "X": 0.0, "Y": 0, "Z": -1,
+          "Pitch": -90.0, "Roll": 0.0, "Yaw": 0
+        },
+        "back_custom": {
+        "CaptureSettings": [
+            {
+              "Width": 1000,
+              "Height": 1000,
+              "FOV_Degrees": 90
+            }
+          ],        
+          "X": 0.0, "Y": 0, "Z": -1,
+          "Pitch": 0.0, "Roll": 0.0, "Yaw": 180.0
+        }
+    },
+    "CameraDefaults": {
+        "CaptureSettings": [
+          {
+        "Width": 1000,
+        "Height": 1000,
+        "FOV_Degrees": 90
+          }
+      ]
+    }
+    }
+    },
+  "SubWindows": [
+    {"WindowID": 0, "ImageType": 5, "CameraName": "top_custom", "Visible": true},
+    {"WindowID": 1, "ImageType": 5, "CameraName": "bottom_custom", "Visible": true},
+    {"WindowID": 2, "ImageType": 5, "CameraName": "back_custom", "Visible": true}
+  ]
+}
