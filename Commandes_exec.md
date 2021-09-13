@@ -21,5 +21,5 @@ Liste des commandes à excéuter depuis la racine du projet pour faire fonctionn
 `python -m mapping.adhoc.display_map -s mapping/distances_gt_all_meters.csv -g mapping/trees_girth.csv --display_path /media/mis/Disque_E/python_scripts/EQUI_AIRSIM/resources/CAPTURES_785_true_origin_24fps/ --display_type rgb --view cartesian --dmax 30 --compare tree_prediction.csv`
 
 ## Evaluate
-`python -m mapping.adhoc.evaluate -p tree_prediction.csv -v mapping/distances_gt_all_meters.csv -g mapping/trees_girth.csv --dmax 40 -o evaluation.csv`
+`python -m mapping.adhoc.evaluate -p mapping/tree_prediction.csv -v mapping/distances_gt_all_meters.csv -g mapping/trees_girth.csv --dmax 40 -o mapping/evaluation.csv`
 

@@ -145,9 +145,9 @@ mu, var = gaussian_mle(TrunkLab)
 print(mu)
 print(var)
 
-#rgbdir = 'E:\\UE_4.16\\Engine\\Binaries\\Win64\\TrainImages_L\\'
-rgbdir = "F:\\ZHD\\TN10\\mytrain\\TestImages\\clip"  
-filtertrunkdir = "F:\\ZHD\\TN10\\mytrain\\TestImages\\filtertrunk"      
+#rgbdir = 'E:/UE_4.16/Engine/Binaries/Win64/TrainImages_L/'
+rgbdir = "TestImages/clip"  
+filtertrunkdir = "TestImages/filtertrunk"      
 for img_name in os.listdir(rgbdir):
     if os.path.splitext(img_name)[1] == '.png':  
     #if img_name == '1.png':

@@ -1,4 +1,4 @@
-"""Module for parsing UE4 retrieved tree instances positions.
+"""Module intended for parsing UE4 retrieved tree instances positions.
 
 This modules parses a text file containing references and transformations of
 tree instances retrieved from the RedwoodForest environment through the

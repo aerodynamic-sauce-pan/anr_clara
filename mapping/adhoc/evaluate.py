@@ -35,8 +35,6 @@ def compute_errors(pred, gt, girths):
                'Distance': np.array(gt_dist),
                'Girth': np.array(gt_girth)}
 
-    # print('gt_vals : ', gt_vals['Angle'].shape, gt_vals['Distance'].shape, gt_vals['Girth'].shape, gt_vals['Angle']-180)
-    # print('pred_vals : ', pred_vals['Angle'].shape, pred_vals['Distance'].shape, pred_vals['Girth'].shape, pred_vals['Angle']-180)
     errors['Absolute'] = {'Angle': np.abs(pred_vals['Angle']-gt_vals['Angle']),
                           'Distance': np.abs(pred_vals['Distance']-gt_vals['Distance']),
                           'Girth': np.abs(pred_vals['Girth']-gt_vals['Girth'])}

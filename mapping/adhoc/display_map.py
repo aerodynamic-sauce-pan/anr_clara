@@ -110,7 +110,7 @@ def plot_tree_map_cart(tree_map, girths, dmax, display_path=None,
 
     plt.figure(figsize=(10, 10))
     trace = np.array([[0], [0]])
-    for idx, ts in enumerate(timestamps[:10]):
+    for idx, ts in enumerate(timestamps[300:]):
         if idx % 1 == 0:
             # Tree map
             plt.subplot(121)
@@ -168,7 +168,7 @@ def plot_tree_map_cart(tree_map, girths, dmax, display_path=None,
                 elif display_type == 'ss':
                     img = plt.imread(display_path+str(ts)+'_ss.png')
                 plt.imshow(img)
-            plt.pause(5)
+            plt.pause(0.002)
             plt.clf()
     plt.show()
 

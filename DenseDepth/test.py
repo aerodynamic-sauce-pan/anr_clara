@@ -75,13 +75,13 @@ if verbose:
 # matplotlib problem on ubuntu terminal fix : matplotlib.use('TkAgg')
 print('Saving results...')
 for i in tqdm(range(inputs.shape[0])):
-    if outputs[i, :, :, :].shape != (640, 480):
-        output = cv2.resize(outputs[i, :, :, :], (640, 480),
+    if outputs[i, :, :, :].shape != (1024, 512):
+        output = cv2.resize(outputs[i, :, :, :], (1024, 512),
                             interpolation=cv2.INTER_CUBIC)
         # output = resize(outputs[i, :, :, :], inputs.shape[1:],
         #                 preserve_range=True, mode='reflect',
         #                 anti_aliasing=True)
-    plt.figure(figsize=(4.8*480/279, 6.4*480/279))
+    plt.figure(figsize=(24,24))
     plt.axis('off')
     plt.imshow(output, cmap='gray')
     if not os.path.isdir(out_dir):

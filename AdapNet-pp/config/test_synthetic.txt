@@ -1,1 +1,1 @@
-../reshaped_imgs/test_forest_equi_small_640x480.png ../reshaped_imgs/test_forest_equi_small_640x480.png
+../TrainImages/SS/24.png ../TrainImages/SS/24.png

@@ -3,13 +3,14 @@ import math
 import numpy as np
 import cv2
 
-test_depth_result_dir = "F:\\ZHD\\TN10\\mytrain\\DenseDepth-master"
-filtertrunkdir = "F:\\ZHD\\TN10\\mytrain\\TestImages\\filtertrunk"
-cluster_trunk_dir = "F:\\ZHD\\TN10\\mytrain\\TestImages\\clustertrunk"
+test_depth_result_dir = "DenseDepth/images/test_synthetic"
+filtertrunkdir = "TestImages/filtertrunk_tlarcher"
+cluster_trunk_dir = "TestImages/clustertrunk_tlarcher"
 
 def calcuDistance(imagenum, data1, data2):
     '''
     计算两个模式样本之间的欧式距离
+    Calculate the Euclidean distance between two model samples
     :param data1:
     :param data2:
     :return:
@@ -68,7 +69,9 @@ def maxmin_distance_cluster(file, data, Theta):
  
 if __name__=='__main__':
     dirs = os.listdir(filtertrunkdir)
+    print('dirs : ', dirs)
     for file in dirs:
+        print('file : ', file)
         image = cv2.imread(os.path.join(filtertrunkdir, file))
         data = []
         for i in range(image.shape[0]):

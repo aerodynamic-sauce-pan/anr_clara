@@ -453,7 +453,7 @@ def export_prediction(export_data):
         csv = csv.append(pd.DataFrame(np.column_stack([timestamps, angles, distances, posXY[0], posXY[1], girths]),
                                       columns=['TimeStamp', 'Tree_angle', 'Tree_distance', 'Tree_X', 'Tree_Y', 'Tree_girth']),
                          ignore_index=True)
-    csv.to_csv('tree_prediction.csv', sep=',', index=False)
+    csv.to_csv('mapping/tree_prediction.csv', sep=',', index=False)
 
 
 def main():
@@ -464,7 +464,7 @@ def main():
 
     export_data = []
     fps = {'rgb': [], 'ss': [], 'dep': []}
-    for fp in np.sort(np.array(get_files_path(SOURCE[0], 'png', 'dep')))[:30]:
+    for fp in np.sort(np.array(get_files_path(SOURCE[0], 'png', 'dep'))):
         if '_rgb' in fp:
             fps['rgb'].append(fp)
         elif '_ss' in fp:
@@ -523,7 +523,7 @@ if __name__ == '__main__':
     DMAX = args.dmax
     VERBOSE = args.verbose is not None
     VIEW = args.view[0] if args.view is not None else None
-    WIDTH, HEIGHT = Image.open(get_files_path(SOURCE[0], 'png', 'dep')[0]).size
+    WIDTH, HEIGHT = Image.open(get_files_path(SOURCE[0], 'png')[0]).size
     # /!\ If WIDTH or HEIGHT is a prime number, their corresponding N_SAMPLE will fall to 1 -> drop the ratio constraint and work with remainders
     N_SAMPLE_DEPTH = get_smaller_nearest_multiple(DMAX, args.nsd)
     N_SAMPLE_WIDTH = get_smaller_nearest_multiple(WIDTH, args.nsw)
