@@ -1,18 +1,19 @@
-# Tree detection
+# General
+This repository is the result of a master intership I carried out at the MIS laboratory of Amiens, France on the CLARA ANR project, under the supervision of Pascal VASSEUR. The purpose of this work is to provide new innovative tools for tree mapping in forest environnement based on 360° images taken from an UAV (Unmaned Autonomous Vehicle, a.k.a. drone). For more details about the project, our technical solutions and members involed in the project, see my internship report located at "Suivi_projet/Theo_2021/Rapport/Larcher_Theo_INSA.pdf". Several modules have been developped or enhanced based on previous work and are listed hereafter.
 
-## DarkNet
+# Deep Learning models
+Due to their large size, some models (AdapNet++, DenseDepth) have been saved and uploaded as archives under the Release "Deep Learning models Sept 2021".
+
+## darknet-master
 *DarkNet* is an open source neural network used for object detection, and backbone of the *YOLO* networks. The executable file for detection, `darknet.exe`, in located in `darknet-master\build\darknet\x64`. You should run it from console. 
 - The network's weights trained on real forest images is located in `darknet-master\build\darknet\x64\backup`.
 - The network's weights trained on the synthetic dataset locates in `darknet-master\build\darknet\x64\backup2`.
 
 ## DenseDepth
-*DenseDepth* is a depth estimation network based on keras. The model used for training on the syhthetic dataset is uploaded in Releases. 
-The test script file `test.py` is located in `DenseDepth-master`.
+*DenseDepth* is a depth estimation network based on keras. The model has been trained on perspective synthetic images located in `TrainImages` (other than `SS_redwood`). The trained model has been saved and uploaded in Releases as an archive.
 
-## AdapNet
-*AdapNet* is a semantic segmentation network based on Tensorflow which uses *ResNet50* as backbone. The model used for training on the syhthetic dataset is uploaded in Releases
-in the following directory : `init_checkpoint\synthia_rgb`. The test file `evaluate.py` is located in `AdapNet-pp-master/`. The test result is in `AdapNet-pp-master\images\test_synthetic`.
-*AdapNet* is easily trainable on a single 12GB memory GPU card and has a fast inference time.
+## AdapNet-pp
+*AdapNet* is a semantic segmentation network based on Tensorflow which uses *ResNet50* as backbone. The trained model has been saved and uploaded in Releases as an archive. *AdapNet* is easily trainable on a single 12GB memory GPU card and has a fast inference time.
 
 # Quality of code
 ## Linters
