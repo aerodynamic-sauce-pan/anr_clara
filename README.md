@@ -1,6 +1,8 @@
 # General
 This repository is the result of my work carried out during my master's internship at the MIS laboratory in Amiens, France as a contribution to the ANR project CLARA. Following previous work on deep learning models used for depth estimation and trees segmentation on RGB forest scenes, this repository contains a solution for 2D tree mapping based on RGB scenes and depth maps as well as a collection of useful scripts intended for image captures in Unreal Engine 4 and various data transformation. More details about the project can be found at `Suivi_projet/Theo_2021/` (french).
 
+See latest development and documentation on the **sandbox branch**.
+
 # Unreal Engine 4
 The directory `equi_airsim` contains scripts used to create our databases from the UE4 Editor running the `RedwoodForest` environment.
 - `augment_airsim_rec.py` : Interpolates values of raw airsim drone pose captures to augment them.
